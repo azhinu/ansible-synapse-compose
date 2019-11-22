@@ -2,15 +2,16 @@
 
 This role install Matrix-Synapse bundle with docker-compose.
 
-
-#### Base version contains 
-- PostgreSQL
+###Bundle contains
 - Synapse
+- PostgreSQL
 - Coturn
 - mxisd
-
-####Full version contains base with
+- Riot-web
 - Nginx
-- Riot-Web
 
 
+###Installation
+
+1. Add hosts to inventory/hosts file
+2. Edit vars in inventory/hosts_vars/<host name>/vars.yml
