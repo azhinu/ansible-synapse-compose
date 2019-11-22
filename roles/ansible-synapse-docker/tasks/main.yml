@@ -1,0 +1,164 @@
+---
+
+###Create directories
+- name: Creates directory
+  file:
+    path: /opt/synapse
+    state: directory
+    owner: 991
+    group: 991
+    mode: 0775
+
+- name: Create mxisd directory
+  become: true
+  file:
+    path: "/opt/mxisd"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+  when: mxisd_enabled | bool
+
+- name: Create coturn directory
+  become: true
+  file:
+    path: "/opt/coturn"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+  when: coturn_enabled | bool
+
+- name: Create riot-web directory
+  become: true
+  file:
+    path: "/opt/coturn"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+  when: riot-web_enabled | bool  
+
+- name: Create nginx directory
+  become: true
+  file:
+    path: "/opt/nginx/html"
+    state: directory
+    owner: 101
+    group: 101
+    mode: 0775
+    recurse: yes
+  when: nginx_enabled | bool  
+  
+###Configurate Synapse
+- name: Generate Synapse env
+  docker_container:
+    name: synapse-cfg-gen
+    image: matrixdotorg/synapse:latest
+    interactive: true
+    cleanup: true
+    command: generate
+    env:
+      SYNAPSE_REPORT_STATS=no
+      SYNAPSE_SERVER_NAME={{synapse_server_name}}
+    mounts:
+      - source: /opt/synapse
+      - target: /data
+      - type: bind
+
+- name: Copy Synapse config
+  become: true
+  template:
+    src: homeserver.yaml
+    dest: /opt/synapse/homeserver.yaml      
+
+- name: Add REST auth provider if needed
+  become: true
+  copy:
+    src: /files/rest_auth_provider.py
+    dest: /opt/synapse/rest_auth_provider.py
+    owner: root
+    group: root
+    mode: '0755'
+  when: mxisd_enabled | bool
+
+
+###Configurate optional services
+- name: Copy mxisd config
+  become: true
+  template:
+    src: mxisd.yaml
+    dest: /opt/mxisd/mxisd.yaml
+  when: mxisd_enabled | bool
+
+- name: Copy coturn config
+  become: true
+  template:
+    src: riot.json
+    dest: /opt/riot-web/config.json
+  when: riot_enabled | bool
+
+- name: Copy coturn config
+  become: true
+  template:
+    src: coturn.conf
+    dest: /opt/coturn/conf
+  when: coturn_enabled | bool
+
+
+###Configurate DB
+- name: Postgre initial start
+  docker_container:
+    name: psql-init
+    image: docker.io/postgres:10-alpine
+    cleanup: true
+    env:
+      POSTGRES_PASSWORD={{psql-pass}}
+    mounts:
+      - source: /opt/schemas
+      - target: /var/lib/postgresql/data
+      - type: bind
+    ports:
+      - "5432:5432"
+
+- name: Create synapse DB
+  postgresql_db:
+    login_host: localhost
+    login_password: {{psql-pass}}
+    name: synapse
+    encoding: UTF-8
+    lc_collate: C
+    lc_ctype: C
+    template: template0
+
+- name: Create synapse user
+  postgresql_user:
+    login_host: localhost
+    login_password: {{psql-pass}}
+    db: synapse
+    name: synapse
+    password: {{synapse_db_pass}}
+    priv: "CONNECT/synapse:ALL"
+
+- name: Stop postgres
+  docker_container:
+    name: psql-init
+    state: stopped
+    
+    
+ ###Configurate docker-compose file   
+- name: Copy docker-compose file
+  become: true
+  template:
+    src: docker-compose.yaml
+    dest: /opt/docker-compose.yaml
+    
+    
+###Start services
+- name: Start services
+  docker_compose:
+    project_src: /opt
+

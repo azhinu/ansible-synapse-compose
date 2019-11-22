@@ -1,0 +1,36 @@
+---
+#Default variables
+
+
+###Install options
+mxisd_enabled: True
+coturn_enabled: True
+riot_enabled: False
+nginx_enabled: False
+
+###Postgres
+psql-pass: {{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}
+synapse_db_pass: {{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}
+
+###Synapse
+synapse_server_name: matrix.lt.loc
+coturn_secret: {{ lookup('password', '/tmp/passwordfile length=64 chars=ascii_letters,digits') }}
+synapse_registration_shared_secret: {{ lookup('password', '/tmp/passwordfile length=64 chars=ascii_letters,digits') }}
+synapse_default_identity_server: https://matrix.lt.loc
+synapse_macaroon_secret_key: {{ lookup('password', '/tmp/passwordfile length=64 chars=ascii_letters,digits') }}
+synapse_form_secret: {{ lookup('password', '/tmp/passwordfile length=64 chars=ascii_letters,digits') }}
+
+###mxisd
+#####https://github.com/kamax-matrix/mxisd
+#####Config file locates at /opt/mxisd
+
+mxisd_ldap_host: 192.168.102.78
+mxisd_ldap_port: 389
+mxisd_ldap_bindDn: 'CN=admin,CN=Users,DC=test,DC=forest'
+mxisd_ldap_bindPassword: password
+mxisd_ldap_baseDNs:
+  - 'OU=riot,DC=test,DC=forest'
+mxisd_ldap_ldap.attribute.uid.type: uid
+mxisd_ldap_ldap.attribute.uid.value: sAMAccountName
+mxisd_ldap_ldap.attribute.name: cn
+

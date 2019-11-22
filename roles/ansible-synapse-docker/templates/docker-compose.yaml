@@ -1,0 +1,80 @@
+#Generate config for postgre
+#docker-compose run --rm db
+#Generate config for synapse
+#docker run -it --rm --mount type=bind,src=/opt/synapse,dst=/data -e SYNAPSE_SERVER_NAME=matrix.lt.loc -e SYNAPSE_REPORT_STATS=no matrixdotorg/synapse:latest generate
+
+version: '3'
+
+services:
+
+  synapse:
+    image: docker.io/matrixdotorg/synapse:latest
+    restart: unless-stopped
+    environment:
+      - SYNAPSE_CONFIG_PATH=/etc/homeserver.yaml
+    volumes:
+      # You may either store all the files in a local folder
+      - /opt/synapse:/etc
+      - /opt/synapse:/data
+  {% if mxisd_enabled == True %}
+      - /opt/synapse/rest_auth_provider.py:/usr/local/lib/python3.7/site-packages/rest_auth_provider.py
+  {% endif %}
+    depends_on:
+      - db
+    ports:
+      - 8008:8008/tcp
+
+  db:
+    image: docker.io/postgres:10-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=fr4EV#0!!kVk
+    volumes:
+      - /opt/schemas:/var/lib/postgresql/data
+    expose:
+      - 5432
+{% if mxisd_enabled == True %}
+  mxisd:
+    image: kamax/mxisd:latest
+    restart: unless-stopped
+    environment:
+      - MATRIX_DOMAIN=matrix.lt.loc
+    volumes:
+      - /opt/mxisd:/etc/mxisd
+      - /opt/mxisd:/var/mxisd
+    depends_on:
+      - synapse
+    ports:
+      - 8090:8090/tcp
+{% endif %}
+
+{% if coturn_enabled == True %}
+  coturn:
+    image: monogramm/docker-coturn
+    restart: unless-stopped
+    volumes:
+      - /opt/coturn:/srv
+    network_mode: host
+{% endif %}
+
+{% if riot_enabled == True %}
+  riot-web:
+    image: vectorim/riot-web
+    restart: unless-stopped
+    volumes:
+      - /opt/riot-web/config.json:/app/config.json
+    ports:
+      - 8081:8081/tcp
+{% endif %}
+
+{% if nginx_enabled == True %}
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/nginx/html:/usr/share/nginx/html:ro
+      - /opt/nginx/:/etc/nginx/:ro
+{% endif %}
