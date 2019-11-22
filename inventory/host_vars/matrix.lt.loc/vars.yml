@@ -1,6 +1,6 @@
 ---
 #Default variables
-
+#You can set all passwords by yourself
 
 ###Install options
 mxisd_enabled: true
