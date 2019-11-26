@@ -15,6 +15,6 @@ This role install Matrix-Synapse bundle with docker-compose.
 
 1. Add hosts to inventory/hosts file
 2. Edit vars in inventory/hosts_vars/<host name>/vars.yml
-3. Run
+3. Run 
+		`ansible-playbook -i inventory/hosts setup.yml`
 
-    ansible-playbook -i inventory/hosts setup.yml
