@@ -23,7 +23,8 @@ docker_version: ''
 # DEPRECATED! nothing replaces this feature
 docker_remove_pre_ce: false
 # Users to be part of the docker group
-docker_users: []
+docker_users:
+  - "{{  ansible_ssh_user }}"
 # Docker plugins.
 # Item fields:
 # * type - Valid types: volumedriver,networkdriver,ipamdriver,authz,logdriver,metricscollector
