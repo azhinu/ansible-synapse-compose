@@ -8,8 +8,8 @@
     mode: 0775
 
 - name: install psycopg2
-  package:
-    name: python3-psycopg2
+  pip:
+    name: psycopg2
     state: latest
     
 - name: Postgre initial start
