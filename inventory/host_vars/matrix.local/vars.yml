@@ -1,6 +1,4 @@
 ---
-#Default variables
-
 
 ###Install options
 services_dir: /opt/matrix

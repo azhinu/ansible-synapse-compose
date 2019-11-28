@@ -1,35 +1,35 @@
 #https://github.com/kamax-matrix/mxisd
 
 matrix:
-  domain: "{{synapse_server_name}}"
+  domain: '{{synapse_server_name}}'
 
 server:
-  name: "{{synapse_server_name}}"
-  publicUrl: "https://{{synapse_server_name}}"
+  name: '{{synapse_server_name}}'
+  publicUrl: 'https://{{synapse_server_name}}'
 
 key:
-  path: "/var/mxisd/sign.key"
+  path: '/var/mxisd/sign.key'
 
 storage:
   provider:
     sqlite:
-      database: "/var/mxisd/mxisd.db"
+      database: '/var/mxisd/mxisd.db'
 
 ldap:
-  enabled: true
+  enabled: {{mxisd_ldap_enabled}}
   connection:
-    host: "{{ mxisd_ldap_host }}"
-    port: "{{ mxisd_ldap_port }}"
-    bindDn: "{{ mxisd_ldap_bindDn }}"
-    bindPassword: "{{ mxisd_ldap_bindPassword }}"
-    baseDNs: "{{ mxisd_ldap_baseDNs }}"
-    ldap.attribute.uid.type: "{{ mxisd_ldap_ldap.attribute.uid.type }}"
-    ldap.attribute.uid.value: "{{ mxisd_ldap_ldap.attribute.uid.value }}"
-    ldap.attribute.name: "{{ mxisd_ldap_ldap.attribute.name }}"
+    host: '{{ mxisd_ldap_host }}'
+    port: {{ mxisd_ldap_port }}
+    bindDn: '{{ mxisd_ldap_bindDn }}'
+    bindPassword: '{{ mxisd_ldap_bindPassword }}'
+    baseDNs: {{ mxisd_ldap_baseDNs }}
+    ldap.attribute.uid.type: '{{ mxisd_ldap_ldap_attribute_uid_type }}'
+    ldap.attribute.uid.value: '{{ mxisd_ldap_ldap_attribute_uid_value }}'
+    ldap.attribute.name: '{{ mxisd_ldap_ldap_attribute_name }}'
 
 dns:
   overwrite:
     homeserver:
       client:
-        - name: "{{ synapse_server_name }}"
+        - name: '{{ synapse_server_name }}'
           value: 'http://synapse:8008'

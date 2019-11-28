@@ -12,4 +12,4 @@
 # consider adding an additional `ansible_connection=local` argument below.
 
 [matrix_servers]
-matrix.lt.loc ansible_ssh_user=azhinu become=true become_user=root ansible_sudo_pass=pass
+3.120.208.21 ansible_ssh_user=ubuntu ansible_become_pass=pass ansible_ssh_private_key_file=/home/ariel/Work/aws-key.pem

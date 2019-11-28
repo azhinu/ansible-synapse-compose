@@ -1,0 +1,20 @@
+---
+- name: Create Nginx directory
+  become: true
+  file:
+    path: "{{ services_dir }}/nginx/{{item}}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes 
+  loop:
+    - html
+    - conf.d
+
+- name: Copy Nginx config
+  become: true
+  template:
+    src: nginx.conf
+    dest: "{{ services_dir }}/nginx/conf.d/matrix-synapse.conf"
+  when: nginx_enabled | bool  

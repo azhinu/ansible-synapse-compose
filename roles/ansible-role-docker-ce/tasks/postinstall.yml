@@ -128,7 +128,7 @@
   become: "{{ docker_pip_sudo | bool }}"
   pip:
     name: pip
-    state: forcereinstall
+    state: latest
   register: _pkg_result
   until: _pkg_result is succeeded
   when: docker_pip_upgrade | bool

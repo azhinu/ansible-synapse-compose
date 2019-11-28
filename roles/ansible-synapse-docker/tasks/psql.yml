@@ -1,0 +1,52 @@
+---
+- name: Create Postgre directory
+  file:
+    path: "{{ services_dir }}/schemas"
+    state: directory
+    owner: '70'
+    group: root
+    mode: 0775
+
+- name: install psycopg2
+  package:
+    name: python3-psycopg2
+    state: latest
+    
+- name: Postgre initial start
+  docker_container:
+    name: psql-init
+    image: docker.io/postgres:10-alpine
+    cleanup: true
+    env:
+      POSTGRES_PASSWORD="{{ psql_pass }}"
+    mounts:
+      - target: /var/lib/postgresql/data
+        source: "{{ services_dir }}/schemas"
+        type: bind
+    ports:
+      - "5432:5432"
+
+- name: Create synapse DB
+  postgresql_db:
+    login_host: localhost
+    login_password: "{{ psql_pass }}"
+    name: synapse
+    encoding: UTF-8
+    lc_collate: C
+    lc_ctype: C
+    template: template0
+
+- name: Create synapse user
+  postgresql_user:
+    login_host: localhost
+    login_password: "{{ psql_pass }}"
+    db: synapse
+    name: synapse
+    password: "{{ synapse_db_pass }}"
+    priv: "ALL"
+
+- name: Stop postgres
+  docker_container:
+    name: psql-init
+    state: stopped
+  

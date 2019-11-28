@@ -1,59 +1,14 @@
 ---
-
-###Create directories
-- name: Creates directory
-  file:
-    path: /opt/synapse
-    state: directory
-    owner: 991
-    group: 991
-    mode: 0775
-
-- name: Create mxisd directory
-  become: true
-  file:
-    path: "/opt/mxisd"
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-    recurse: yes
-  when: mxisd_enabled | bool
-
-- name: Create coturn directory
-  become: true
-  file:
-    path: "/opt/coturn"
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-    recurse: yes
-  when: coturn_enabled | bool
-
-- name: Create riot-web directory
-  become: true
-  file:
-    path: "/opt/coturn"
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-    recurse: yes
-  when: riot-web_enabled | bool  
-
-- name: Create nginx directory
-  become: true
-  file:
-    path: "/opt/nginx/html"
-    state: directory
-    owner: 101
-    group: 101
-    mode: 0775
-    recurse: yes
-  when: nginx_enabled | bool  
   
 ###Configurate Synapse
+- name: Create Synapse directory
+  file:
+    path: "{{ services_dir }}/synapse"
+    state: directory
+    owner: '991'
+    group: '991'
+    mode: 0775
+    
 - name: Generate Synapse env
   docker_container:
     name: synapse-cfg-gen
@@ -65,99 +20,80 @@
       SYNAPSE_REPORT_STATS=no
       SYNAPSE_SERVER_NAME="{{ synapse_server_name }}"
     mounts:
-      - source: /opt/synapse
       - target: /data
-      - type: bind
+        source: "{{ services_dir }}/synapse"
+        type: bind
 
 - name: Copy Synapse config
-  become: true
   template:
     src: homeserver.yaml
-    dest: /opt/synapse/homeserver.yaml      
+    dest: "{{ services_dir }}/synapse/homeserver.yaml"   
 
 - name: Add REST auth provider if needed
-  become: true
   copy:
-    src: /files/rest_auth_provider.py
-    dest: /opt/synapse/rest_auth_provider.py
+    src: files/rest_auth_provider.py
+    dest: "{{ services_dir }}/synapse/rest_auth_provider.py"
     owner: root
     group: root
     mode: '0755'
   when: mxisd_enabled | bool
 
+###Configurate DB
+
+- name: Configurate Postgre
+  include_tasks: psql.yml
 
 ###Configurate optional services
-- name: Copy mxisd config
-  become: true
-  template:
-    src: mxisd.yaml
-    dest: /opt/mxisd/mxisd.yaml
+##mxisd
+- name: Install mxisd
+  include_tasks: mxisd.yml
   when: mxisd_enabled | bool
-
-- name: Copy coturn config
-  become: true
-  template:
-    src: riot.json
-    dest: /opt/riot-web/config.json
-  when: riot_enabled | bool
-
-- name: Copy coturn config
-  become: true
-  template:
-    src: coturn.conf
-    dest: /opt/coturn/conf
+  
+##Coturn
+- name: Install coturn
+  include_tasks: coturn.yml
   when: coturn_enabled | bool
+  
 
+#Setting up Nginx
 
-###Configurate DB
-- name: Postgre initial start
-  docker_container:
-    name: psql-init
-    image: docker.io/postgres:10-alpine
-    cleanup: true
-    env:
-      POSTGRES_PASSWORD="{{ psql-pass }}"
-    mounts:
-      - source: /opt/schemas
-      - target: /var/lib/postgresql/data
-      - type: bind
-    ports:
-      - "5432:5432"
+- name: Install Nginx
+  include_tasks: nginx.yml
+  when: nginx_enabled | bool  
 
-- name: Create synapse DB
-  postgresql_db:
-    login_host: localhost
-    login_password: "{{ psql-pass }}"
-    name: synapse
-    encoding: UTF-8
-    lc_collate: C
-    lc_ctype: C
-    template: template0
+#Setting up riot-web
 
-- name: Create synapse user
-  postgresql_user:
-    login_host: localhost
-    login_password: "{{ psql-pass }}"
-    db: synapse
-    name: synapse
-    password: "{{ synapse_db_pass }}"
-    priv: "CONNECT/synapse:ALL"
+- name: Install Riot
+  include_tasks: riot.yml
+  when: riot_enabled | bool  
 
-- name: Stop postgres
-  docker_container:
-    name: psql-init
-    state: stopped
-    
     
  ###Configurate docker-compose file   
 - name: Copy docker-compose file
   become: true
   template:
     src: docker-compose.yaml
-    dest: /opt/docker-compose.yaml
+    dest: "{{ services_dir }}/docker-compose.yaml"
     
     
 ###Start services
 - name: Start services
   docker_compose:
-    project_src: /opt
+    project_src: "{{ services_dir }}"
+  when: start_services_after_install | bool  
+    
+###END
+- debug:
+    msg:
+    - "Generated credentials:"
+    - "Postgre:"
+    - "  User: postgre"
+    - "  Pass: {{ psql_pass }}"
+    - "  User: synapse"
+    - "  Pass: {{ synapse_db_pass }}"
+    - "Synapse"
+    - "Turn secret: {{ coturn_secret }}"
+    - "Registration_secret: {{ synapse_registration_shared_secret }}"
+    - "Macaroon secret: {{ synapse_macaroon_secret_key }}"
+    - "Form secret: {{ synapse_form_secret }}"
+

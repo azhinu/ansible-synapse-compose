@@ -1,13 +1,11 @@
 ---
-#Default variables
-
 
 ###Install options
 services_dir: /opt/matrix
 mxisd_enabled: false
-coturn_enabled: false
+coturn_enabled: true
 nginx_enabled: false
-riot_enabled: false
+riot_enabled: true
 riot_version: v1.5.5
 start_services_after_install: false
 
@@ -44,4 +42,4 @@ mxisd_ldap_ldap_attribute_name: 'cn'
 ###Nginx
 nginx_synapse_domain: matrix.local
 nginx_riot_domain: riot.matrix.local
-nginx_tls_disabled: false
+nginx_tls_disabled: true
