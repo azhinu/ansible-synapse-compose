@@ -36,7 +36,7 @@
     owner: root
     group: root
     mode: '0755'
-  when: mxisd_enabled | bool
+  when: ma1sd_enabled | bool
 
 ###Configurate DB
 
@@ -44,10 +44,10 @@
   include_tasks: psql.yml
 
 ###Configurate optional services
-##mxisd
-- name: Install mxisd
-  include_tasks: mxisd.yml
-  when: mxisd_enabled | bool
+##ma1sd
+- name: Install ma1sd
+  include_tasks: ma1sd.yml
+  when: ma1sd_enabled | bool
   
 ##Coturn
 - name: Install coturn

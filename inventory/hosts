@@ -12,4 +12,4 @@
 # consider adding an additional `ansible_connection=local` argument below.
 
 [matrix_servers]
-matrix.local ansible_ssh_user=ubuntu ansible_become_pass=pass ansible_ssh_private_key_file=./key.pem
+matrix.lt.loc ansible_ssh_user=azhinu ansible_become_pass=pass ansible_ssh_private_key_file=./key.pem

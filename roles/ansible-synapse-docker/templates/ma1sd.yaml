@@ -1,0 +1,35 @@
+#https://github.com/ma1uta/ma1sd
+
+matrix:
+  domain: '{{synapse_server_name}}'
+
+server:
+  name: '{{synapse_server_name}}'
+  publicUrl: 'https://{{synapse_server_name}}'
+
+key:
+  path: '/var/ma1sd/sign.key'
+
+storage:
+  provider:
+    sqlite:
+      database: '/var/ma1sd/ma1sd.db'
+
+ldap:
+  enabled: {{ma1sd_ldap_enabled}}
+  connection:
+    host: '{{ ma1sd_ldap_host }}'
+    port: {{ ma1sd_ldap_port }}
+    bindDn: '{{ ma1sd_ldap_bindDn }}'
+    bindPassword: '{{ ma1sd_ldap_bindPassword }}'
+    baseDNs: {{ ma1sd_ldap_baseDNs }}
+    ldap.attribute.uid.type: '{{ ma1sd_ldap_ldap_attribute_uid_type }}'
+    ldap.attribute.uid.value: '{{ ma1sd_ldap_ldap_attribute_uid_value }}'
+    ldap.attribute.name: '{{ ma1sd_ldap_ldap_attribute_name }}'
+
+dns:
+  overwrite:
+    homeserver:
+      client:
+        - name: '{{ synapse_server_name }}'
+          value: 'http://synapse:8008'

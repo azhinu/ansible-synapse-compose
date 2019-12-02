@@ -1363,11 +1363,11 @@ password_config:
 #        #filter: "(objectClass=posixAccount)"
 
 
-{% if mxisd_enabled == True %}
+{% if ma1sd_enabled == True %}
 password_providers:
   - module: 'rest_auth_provider.RestAuthProvider'
     config:
-      endpoint: 'http://mxisd:8090'
+      endpoint: 'http://ma1sd:8090'
 {% endif %}
 
 # Clients requesting push notifications can either have the body of

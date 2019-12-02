@@ -11,7 +11,7 @@ services:
       # You may either store all the files in a local folder
       - {{ services_dir }}/synapse:/etc
       - {{ services_dir }}/synapse:/data
-{% if mxisd_enabled == True %}
+{% if ma1sd_enabled == True %}
       - {{ services_dir }}/synapse/rest_auth_provider.py:/usr/local/lib/python3.7/site-packages/rest_auth_provider.py
 {% endif %}  
     depends_on:
@@ -28,15 +28,15 @@ services:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
     expose:
       - 5432
-{% if mxisd_enabled == True %}
-  mxisd:
-    image: kamax/mxisd:latest
+{% if ma1sd_enabled == True %}
+  ma1sd:
+    image: ma1uta/ma1sd:latest
     restart: unless-stopped
     environment:
       - MATRIX_DOMAIN={{synapse_server_name}}
     volumes:
-      - {{ services_dir }}/mxisd:/etc/mxisd
-      - {{ services_dir }}/mxisd:/var/mxisd
+      - {{ services_dir }}/ma1sd:/etc/ma1sd
+      - {{ services_dir }}/ma1sd:/var/ma1sd
     depends_on:
       - synapse
     ports:

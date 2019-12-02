@@ -4,7 +4,7 @@
 
 ###Install options
 services_dir: /opt/matrix
-mxisd_enabled: false
+ma1sd_enabled: false
 coturn_enabled: false
 nginx_enabled: false
 riot_enabled: false
@@ -26,19 +26,19 @@ synapse_macaroon_secret_key: "{{ lookup('password', '/tmp/passwordfile length=64
 synapse_form_secret: "{{ lookup('password', '/tmp/passwordfile length=64 chars=ascii_letters,digits') }}"
 
 
-###mxisd
-#####https://github.com/kamax-matrix/mxisd
-#####Config file locates at /opt/mxisd
-mxisd_ldap_enabled: false
-mxisd_ldap_host: 'ldap-server'
-mxisd_ldap_port: '389'
-mxisd_ldap_bindDn: 'CN=admin,CN=Users,DC=domain,DC=local'
-mxisd_ldap_bindPassword: 'password'
-mxisd_ldap_baseDNs:
+###ma1sd
+#####https://github.com/ma1uta/ma1sd
+#####Config file locates at /opt/ma1sd
+ma1sd_ldap_enabled: false
+ma1sd_ldap_host: 'ldap-server'
+ma1sd_ldap_port: '389'
+ma1sd_ldap_bindDn: 'CN=admin,CN=Users,DC=domain,DC=local'
+ma1sd_ldap_bindPassword: 'password'
+ma1sd_ldap_baseDNs:
   - 'OU=riot,DC=domain,DC=local'
-mxisd_ldap_ldap_attribute_uid_type: 'uid'
-mxisd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
-mxisd_ldap_ldap_attribute_name: 'cn'
+ma1sd_ldap_ldap_attribute_uid_type: 'uid'
+ma1sd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
+ma1sd_ldap_ldap_attribute_name: 'cn'
 
 
 ###Nginx
