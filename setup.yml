@@ -6,4 +6,9 @@
     - ansible-role-docker-ce
     - ansible-synapse-docker
  
-    
+- name: "Set up a external Coturn server"
+  hosts: "{{ target if target is defined else 'coturn_servers' }}"
+  become: true
+  roles:
+    - ansible-role-docker-ce
+    - coturn-ext

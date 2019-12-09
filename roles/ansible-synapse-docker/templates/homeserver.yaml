@@ -771,7 +771,7 @@ max_spider_size: 10M
 # The public URIs of the TURN server to give to clients
 #
 turn_uris:
-  - "turn:coturn?transport=udp"
+  - "turn:{{synapse_coturn_address}}?transport=udp"
 #  - "turn:matrix.local?transport=tcp"
 
 

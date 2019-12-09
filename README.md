@@ -1,4 +1,4 @@
-## Ansible role: Matrix-Synapse docker-compose
+## Ansible playbook: Matrix-Synapse docker-compose
 
 This role install Matrix-Synapse bundle with docker-compose.
 
@@ -6,7 +6,7 @@ This role install Matrix-Synapse bundle with docker-compose.
 - Synapse
 - PostgreSQL
 - Coturn
-- maisd
+- ma!sd
 - Riot-web
 - Nginx
 
@@ -20,3 +20,7 @@ This role install Matrix-Synapse bundle with docker-compose.
 	    ansible-playbook -i inventory/hosts setup.yml
 
 All credentials will be showen after successful deployment. To run role again put creds to the inventory vars.
+
+### External coturn serve r
+
+This playbook can install dedicated coturn server. Set [coturn_servers] in 'hosts' file and 'coturn_enabled' to 'false' to setup dedicated coturn server. 
