@@ -37,7 +37,10 @@
     group: root
     mode: '0755'
   when: ma1sd_enabled | bool
-
+  
+- name: Enable Synapse messanges cleanup
+  include_tasks: synapse_cleanup.yml
+  when: synapse_cleanup_enabled | bool
 ###Configurate DB
 
 - name: Configurate Postgre
@@ -80,7 +83,12 @@
 - name: Start services
   docker_compose:
     project_src: "{{ services_dir }}"
-  when: start_services_after_install | bool  
+  when: start_services_after_install | bool
+  
+###Create Synapse admin user
+- name: Create Synapse admin user
+  command: 'register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -k {{synapse_registration_shared_secret}} http://localhost:8008'
+  when: start_services_after_install && synapse_create_admin_user| bool
     
 ###END
 - debug:
@@ -96,4 +104,6 @@
     - "Registration_secret: {{ synapse_registration_shared_secret }}"
     - "Macaroon secret: {{ synapse_macaroon_secret_key }}"
     - "Form secret: {{ synapse_form_secret }}"
+    - "Synapse admin user: {{synapse_admin_user}}"
+    - "Synapse admin pass: {{synapse_admin_pass}}"
 

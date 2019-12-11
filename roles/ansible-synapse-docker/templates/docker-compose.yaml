@@ -20,7 +20,7 @@ services:
       - 8008:8008/tcp
 
   db:
-    image: docker.io/postgres:10-alpine
+    image: docker.io/postgres:10-alpine:latest
     restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD={{psql_pass}}
@@ -45,7 +45,7 @@ services:
 
 {% if coturn_enabled == True %}
   coturn:
-    image: monogramm/docker-coturn
+    image: monogramm/docker-coturn:latest
     restart: unless-stopped
     volumes:
       - {{ services_dir }}/coturn:/srv
@@ -54,7 +54,7 @@ services:
 
 {% if nginx_enabled == True %}
   nginx:
-    image: nginx:alpine
+    image: nginx:alpine:latest
     restart: unless-stopped
     ports:
       - "80:80"

@@ -1,0 +1,26 @@
+---
+- name: Copy history cleanup script
+  template:
+    src: synapse_clear_history.py
+    dest: "{{ services_dir }}/synapse/synapse_clear_history.py"   
+    
+- name: Copy history cleanup service
+  template:
+    src: synapse_clear_history.service
+    dest: /usr/lib/systemd/system/synapse_clear_history.service" 
+
+- name: Copy history cleanup timer
+  template:
+    src: synapse_clear_history.timer
+    dest: /usr/lib/systemd/system/synapse_clear_history.timer" 
+    
+- name: Enable history cleanup timer
+  systemd:
+    name: synapse_clear_history.service
+    enabled: yes
+    
+- name: Enable history cleanup timer
+  systemd:
+    name: synapse_clear_history.timer
+    state: started
+    enabled: yes

@@ -21,6 +21,15 @@ synapse_default_identity_server: matrix.local
 synapse_default_identity_server_url: https://matrix.local
 ###To use internal coturn server set "synapse_coturn_address: coturn"
 synapse_coturn_address: coturn
+
+#To create admin user set 'start_services_after_install' to true
+synapse_create_admin_user: false
+synapse_admin_user: synapse_admin
+synapse_admin_pass: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
+
+#Enable messanges cleanup script
+synapse_cleanup_enabled: false
+
 coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_registration_shared_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_macaroon_secret_key: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"

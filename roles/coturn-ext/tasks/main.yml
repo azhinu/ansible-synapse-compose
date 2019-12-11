@@ -19,7 +19,7 @@
 - name: Start coturn
   docker_container:
     name: coturn
-    image: monogramm/docker-coturn
+    image: monogramm/docker-coturn:latest
     mounts:
       - target: /srv
         source: "{{ services_dir }}/coturn"

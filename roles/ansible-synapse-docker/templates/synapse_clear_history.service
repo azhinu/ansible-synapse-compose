@@ -1,0 +1,9 @@
+[Unit]
+Description=Clear synapse messages
+
+[Service]
+Type=simple
+ExecStart=python3 {{ services_dir }}/synapse/synapse_clear_history.py 
+
+[Install]
+WantedBy=multi-user.target

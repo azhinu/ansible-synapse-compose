@@ -6,7 +6,7 @@ This role install Matrix-Synapse bundle with docker-compose.
 - Synapse
 - PostgreSQL
 - Coturn
-- ma!sd
+- ma1sd
 - Riot-web
 - Nginx
 
