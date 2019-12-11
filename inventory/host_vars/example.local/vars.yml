@@ -1,0 +1,57 @@
+---
+#Default variables
+
+
+###Install options
+services_dir: /opt/matrix
+ma1sd_enabled: false
+coturn_enabled: false
+nginx_enabled: false
+riot_enabled: false
+riot_version: v1.5.5
+start_services_after_install: false
+
+###Postgres
+psql_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
+synapse_db_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
+
+###Synapse
+synapse_server_name: matrix.local
+synapse_default_identity_server: matrix.local
+synapse_default_identity_server_url: https://matrix.local
+###To use internal coturn server set "synapse_coturn_address: coturn"
+synapse_coturn_address: coturn
+
+#To create admin user set 'start_services_after_install' to true
+synapse_create_admin_user: false
+synapse_admin_user: synapse_admin
+synapse_admin_pass: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
+
+#Enable messanges cleanup script
+synapse_cleanup_enabled: false
+
+coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+synapse_registration_shared_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+synapse_macaroon_secret_key: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+synapse_form_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+
+
+###ma1sd
+#####https://github.com/ma1uta/ma1sd
+#####Config file locates at /opt/ma1sd
+ma1sd_ldap_enabled: false
+ma1sd_ldap_host: 'ldap-server'
+ma1sd_ldap_port: '389'
+ma1sd_ldap_bindDn: 'CN=admin,CN=Users,DC=matrix,DC=local'
+ma1sd_ldap_bindPassword: 'password'
+ma1sd_ldap_baseDNs:
+  - 'OU=riot,DC=matrix,DC=local'
+ma1sd_ldap_ldap_attribute_uid_type: 'uid'
+ma1sd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
+ma1sd_ldap_ldap_attribute_name: 'cn'
+
+
+###Nginx
+nginx_synapse_domain: matrix.local
+nginx_riot_domain: riot.matrix.local
+nginx_tls_disabled: false
