@@ -1,2 +1,2 @@
-inventory/matrix.lt.loc
-inventory/hosts
+inventory/*
+!/inventory/hosts_sample.yaml

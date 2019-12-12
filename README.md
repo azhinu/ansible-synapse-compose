@@ -1,8 +1,16 @@
 ## Ansible playbook: Matrix-Synapse docker-compose
 
-This role install Matrix-Synapse bundle with docker-compose.
+This playbook install Matrix-Synapse bundle with docker-compose.
+Playbook contains following roles:
+- Docker
+- Matrix-Synaspse bundle
+- Coturn server
+- OpenLDAP with phpLDAPadmin
+- Nginx proxy
 
-### Bundle contains
+All roles can be applied separately.
+
+### Matrix-Synapse bundle contains
 - Synapse
 - PostgreSQL
 - Coturn
@@ -10,17 +18,40 @@ This role install Matrix-Synapse bundle with docker-compose.
 - Riot-web
 - Nginx
 
+By default Matrix-Synapse bundle installs PostgreSQL, Synapse, ma1sd and Nginx without TLS.
+
+To install this role fill Matrix-Synapse server vars in inventory.
+
+By design this role should be applied to server in local network with local domain.
+
+### Coturn server
+
+Coturn needs to allow users make calls with Matrix-Synapse. Coturn server should be available from internet.
+
+To user Coturn server role you need to fill Coturn vars in inventory.
+
+### OpenLDAP
+
+OpenLDAP using to manage Matrix-Synaspse users.
+
+By design this service should be installed at Matrix-Synapse bundle server.
+
+To use this role fill OpenLDAP vars in inventory.
+
+### Nginx nginx
+
+Nginx proxy is the entry point of Matrix-Synapse. This role should be applied to the server that available from internet. To apply this role enter public address of Matrix-Synapse server to inventory.
 
 ### Installation
 
 1. Add hosts to inventory/hosts file
 2. Edit vars in inventory/hosts_vars/'host name'/vars.yml
-3. Run 
+3. Run
 
 	    ansible-playbook -i inventory/hosts setup.yml
 
 All credentials will be showen after successful deployment. To run role again put creds to the inventory vars.
 
-### External coturn serve r
+### External coturn server
 
-This playbook can install dedicated coturn server. Set [coturn_servers] in 'hosts' file and 'coturn_enabled' to 'false' to setup dedicated coturn server. 
+This playbook can install dedicated coturn server. Set [coturn_servers] in 'hosts' file and 'coturn_enabled' to 'false' to setup dedicated coturn server.

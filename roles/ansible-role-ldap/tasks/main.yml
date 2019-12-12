@@ -1,0 +1,30 @@
+---
+
+
+- name: Install OpenLDAP server
+  docker_container:
+    name: openldap_server
+    image: osixia/openldap:latest
+    env:
+      LDAP_ORGANISATION: "{{LDAP_PHP_ADMIN}}"
+      LDAP_DOMAIN: "{{LDAP_DOMAIN}}"
+      LDAP_ADMIN_PASSWORD: "{{LDAP_ADMIN_PASSWORD}}"
+    ports:
+      - 636:636
+
+- name: Install  server phpLDAPadmin
+  docker_container:
+    name: openldap_admin
+    image: osixia/phpldapadmin:latest
+    env:
+      PHPLDAPADMIN_HTTPS: false
+    ports:
+      - 8180:80
+  when: LDAP_PHP_ADMIN | bool
+
+- debug:
+    msg:
+      - 'LDAP creds:'
+      - 'Domain: {{LDAP_DOMAIN}}'
+      - 'LDAP user: admin'
+      - 'LDAP password: {{LDAP_ADMIN_PASSWORD}}'

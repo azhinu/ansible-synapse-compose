@@ -14,15 +14,16 @@ start_services_after_install: false
 ###Postgres
 psql_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 synapse_db_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
+#Default synapse user and db: "synapse"
 
 ###Synapse
-synapse_server_name: matrix.local
-synapse_default_identity_server: matrix.local
-synapse_default_identity_server_url: https://matrix.local
-###To use internal coturn server set "synapse_coturn_address: coturn"
+synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.local
+synapse_default_identity_server: {{synapse_server_name}} #Domain name of synapse identity server. By default useing synapse server name.
+synapse_default_identity_server_url: http://{{synapse_server_name}} #URL of synapse identity server. By default useing synapse server name.
+###To use internal coturn server set "synapse_coturn_address: coturn". Another way set to coturn server address.
 synapse_coturn_address: coturn
 
-#To create admin user set 'start_services_after_install' to true
+#Create matrix user with admin privs. To use this option set 'start_services_after_install' to true
 synapse_create_admin_user: false
 synapse_admin_user: synapse_admin
 synapse_admin_pass: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
@@ -40,12 +41,12 @@ synapse_form_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits
 #####https://github.com/ma1uta/ma1sd
 #####Config file locates at /opt/ma1sd
 ma1sd_ldap_enabled: false
-ma1sd_ldap_host: 'ldap-server'
-ma1sd_ldap_port: '389'
-ma1sd_ldap_bindDn: 'CN=admin,CN=Users,DC=domain,DC=local'
-ma1sd_ldap_bindPassword: 'password'
+ma1sd_ldap_host: 'ldap-server' #LDAP server address
+ma1sd_ldap_port: '389' #LDAP server port
+ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=local' #Example for user admin at matrix.local LDAP server
+ma1sd_ldap_bindPassword: 'admin'
 ma1sd_ldap_baseDNs:
-  - 'OU=riot,DC=domain,DC=local'
+  - 'OU=users,DC=matrix,DC=local'
 ma1sd_ldap_ldap_attribute_uid_type: 'uid'
 ma1sd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
 ma1sd_ldap_ldap_attribute_name: 'cn'
@@ -54,4 +55,4 @@ ma1sd_ldap_ldap_attribute_name: 'cn'
 ###Nginx
 nginx_synapse_domain: matrix.local
 nginx_riot_domain: riot.matrix.local
-nginx_tls_disabled: false
+nginx_tls_disabled: true

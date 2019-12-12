@@ -1,0 +1,4 @@
+LDAP_PHP_ADMIN: True
+LDAP_ORGANISATION: "Matrix-Synapse"
+LDAP_DOMAIN: "matrix.local"
+LDAP_ADMIN_PASSWORD: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
