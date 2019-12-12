@@ -45,13 +45,9 @@ Nginx proxy is the entry point of Matrix-Synapse. This role should be applied to
 ### Installation
 
 1. Add hosts to inventory/hosts file
-2. Edit vars in inventory/hosts_vars/'host name'/vars.yml
+2. Edit vars in inventory/hosts file
 3. Run
 
 	    ansible-playbook -i inventory/hosts setup.yml
 
-All credentials will be showen after successful deployment. To run role again put creds to the inventory vars.
-
-### External coturn server
-
-This playbook can install dedicated coturn server. Set [coturn_servers] in 'hosts' file and 'coturn_enabled' to 'false' to setup dedicated coturn server.
+All credentials will be shown after successful deployment. To run role again put creds to the inventory vars.

@@ -19,8 +19,6 @@ matrix_servers:
 
     ###Synapse
     synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.local
-    synapse_default_identity_server: {{synapse_server_name}} #Domain name of synapse identity server. By default useing synapse server name.
-    synapse_default_identity_server_url: http://{{synapse_server_name}} #URL of synapse identity server. By default useing synapse server name.
     ###To use internal coturn server set "synapse_coturn_address: coturn". Another way set to coturn server address.
     synapse_coturn_address: coturn
 
@@ -63,6 +61,11 @@ coturn_servers:
   hosts:
    #coturn.local:
   vars:
+    coturn_server_address: coturn.example.org
+    ## Generate random secret for coturn config
+    coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+    ## Coturn dir location
+    services_dir: /opt
 
 #Host to install LDAP server
 ldap_server:
@@ -77,6 +80,7 @@ ldap_server:
 #By default nginx proxy pass the matrix-synapse server with TLS redirection
 nginx_servers:
   hosts:
-    #nginx.local
+    #matrix.example.org
   vars:
     nginx_proxy_domain: matrix.example.org
+    nginx_proxy_backend: {{synapse_server_name}} #By default using synapse server name as synapse backend address.
