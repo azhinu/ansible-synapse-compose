@@ -5,7 +5,7 @@
 ###Install options
 services_dir: /opt/matrix
 ma1sd_enabled: false
-coturn_enabled: false
+coturn_enabled: "false"
 nginx_enabled: false
 riot_enabled: false
 riot_version: v1.5.5
@@ -18,15 +18,13 @@ synapse_db_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters
 
 ###Synapse
 synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.local
-synapse_default_identity_server: {{synapse_server_name}} #Domain name of synapse identity server. By default useing synapse server name.
-synapse_default_identity_server_url: http://{{synapse_server_name}} #URL of synapse identity server. By default useing synapse server name.
 ###To use internal coturn server set "synapse_coturn_address: coturn". Another way set to coturn server address.
 synapse_coturn_address: coturn
 
 #Create matrix user with admin privs. To use this option set 'start_services_after_install' to true
 synapse_create_admin_user: false
 synapse_admin_user: synapse_admin
-synapse_admin_pass: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
+synapse_admin_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 
 #Enable messanges cleanup script
 synapse_cleanup_enabled: false
@@ -55,4 +53,4 @@ ma1sd_ldap_ldap_attribute_name: 'cn'
 ###Nginx
 nginx_synapse_domain: matrix.local
 nginx_riot_domain: riot.matrix.local
-nginx_tls_disabled: true
+nginx_tls_disabled: false

@@ -1,0 +1,23 @@
+---
+
+- name: Copy certbot renewal service
+  template:
+    src: certbot_renewal.service
+    dest: /usr/lib/systemd/system/certbot_renewal.service
+
+- name: Copy certbot renewal timer
+  template:
+    src: certbot_renewal.timer
+    dest: /usr/lib/systemd/system/certbot_renewal.timer
+
+- name: Enable certbot renewal service
+  systemd:
+    name: certbot_renewal.service
+    enabled: yes
+    daemon-reload: yes
+
+- name: Enable certbot renewal timer
+  systemd:
+    name: certbot_renewal.timer
+    state: started
+    enabled: yes

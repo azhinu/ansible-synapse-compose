@@ -1,0 +1,13 @@
+---
+- name: Determine Python interpreter
+  import_playbook: determine_python_interpreter.yml
+
+- name: Test audit
+  hosts: test-host
+  vars:
+    docker_enable_audit: true
+  roles:
+    - haxorof.docker_ce
+
+- name: Verify Docker function
+  import_playbook: verify_docker.yml

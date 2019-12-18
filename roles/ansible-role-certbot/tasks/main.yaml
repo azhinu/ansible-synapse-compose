@@ -1,34 +1,39 @@
 ---
-- name: Install Certbot.
-  package: "name={{ certbot_package }} state=present"
+- name: Setup firewalld
+  firewalld:
+    service: https
+    permanent: yes
+    state: enabled
 
-- name: Check if certificate already exists.
+- name: setup firewalld
+  firewalld:
+    zone: public
+    service: http
+    permanent: yes
+    state: enabled
+
+# - name: Bounce firewalld
+#   service:
+#     name: firewalld
+#     state: restarted
+
+- name: Check if certbot already exist.
   stat:
-    path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
-  register: letsencrypt_cert
+    path: /bin/certbot-auto
+  register: certbot_exist
 
-- name: Stop services to allow certbot to generate a cert.
-  service:
-    name: "{{ item }}"
-    state: stopped
-  when: not letsencrypt_cert.stat.exists
-  with_items: "{{ certbot_create_standalone_stop_services }}"
+- name: Download certbot
+  get_url:
+    url: https://dl.eff.org/certbot-auto
+    dest: /bin/certbot-auto
+    mode: '0755'
+    owner: 'root'
+  when: not certbot_exist.stat.exists
 
-- name: Generate new certificate if one doesn't exist.
-  command: "{{ certbot_create_command }}"
-  when: not letsencrypt_cert.stat.exists
+- include_tasks: create-cert-standalone.yaml
+  with_items: "{{ certbot_certs }}"
+  loop_control:
+    loop_var: cert_item
 
-- name: Start services after cert has been generated.
-  service:
-    name: "{{ item }}"
-    state: started
-  when: not letsencrypt_cert.stat.exists
-  with_items: "{{ certbot_create_standalone_stop_services }}"
-
-- name: Add cron job for certbot renewal (if configured).
-  cron:
-    name: Certbot automatic renewal.
-    job: "{{ certbot_script }} renew --quiet --no-self-upgrade"
-    minute: "30"
-    hour: "3"
-    user: "{{ ansible_user | default(lookup('env', 'USER')) }}"
+- name: Add certbot renewal service
+  include_tasks: certbot-renewal.yaml

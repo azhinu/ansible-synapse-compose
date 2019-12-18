@@ -1,5 +1,5 @@
 ---
-  
+
 ###Configurate Synapse
 - name: Create Synapse directory
   file:
@@ -8,7 +8,7 @@
     owner: '991'
     group: '991'
     mode: 0775
-    
+
 - name: Generate Synapse env
   docker_container:
     name: synapse-cfg-gen
@@ -27,7 +27,7 @@
 - name: Copy Synapse config
   template:
     src: homeserver.yaml
-    dest: "{{ services_dir }}/synapse/homeserver.yaml"   
+    dest: "{{ services_dir }}/synapse/homeserver.yaml"
 
 - name: Add REST auth provider if needed
   copy:
@@ -37,7 +37,7 @@
     group: root
     mode: '0755'
   when: ma1sd_enabled | bool
-  
+
 - name: Enable Synapse messanges cleanup
   include_tasks: synapse_cleanup.yml
   when: synapse_cleanup_enabled | bool
@@ -51,45 +51,46 @@
 - name: Install ma1sd
   include_tasks: ma1sd.yml
   when: ma1sd_enabled | bool
-  
+
 ##Coturn
 - name: Install coturn
   include_tasks: coturn.yml
   when: coturn_enabled | bool
-  
+  tags: test
 
 #Setting up Nginx
 
 - name: Install Nginx
   include_tasks: nginx.yml
-  when: nginx_enabled | bool  
+  when: not nginx_enabled
+  tags: test
 
 #Setting up riot-web
 
 - name: Install Riot
   include_tasks: riot.yml
-  when: riot_enabled | bool  
+  when: riot_enabled | bool
 
-    
- ###Configurate docker-compose file   
+
+ ###Configurate docker-compose file
 - name: Copy docker-compose file
   become: true
   template:
     src: docker-compose.yaml
     dest: "{{ services_dir }}/docker-compose.yaml"
-    
-    
+
+
 ###Start services
 - name: Start services
   docker_compose:
     project_src: "{{ services_dir }}"
   when: start_services_after_install | bool
-  
+
 ###Create Synapse admin user
 - name: Create Synapse admin user
   command: 'register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -k {{synapse_registration_shared_secret}} http://localhost:8008'
-  when: start_services_after_install && synapse_create_admin_user| bool
-    
+  when: start_services_after_install and synapse_create_admin_user | bool
+
 ###END
 - debug:
     msg:
@@ -106,4 +107,3 @@
     - "Form secret: {{ synapse_form_secret }}"
     - "Synapse admin user: {{synapse_admin_user}}"
     - "Synapse admin pass: {{synapse_admin_pass}}"
-

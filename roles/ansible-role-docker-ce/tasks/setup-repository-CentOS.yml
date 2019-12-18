@@ -62,3 +62,11 @@
         _docker_os_dist == "RedHat"
   tags:
     - skip_ansible_lint
+- name: Install dev pgks
+  yum:
+    name: "{{item}}"
+    state: present
+  loop:
+    - "@Development tools"
+    - "python2-devel"
+    - "python3-devel"

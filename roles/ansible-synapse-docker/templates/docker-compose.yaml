@@ -11,16 +11,16 @@ services:
       # You may either store all the files in a local folder
       - {{ services_dir }}/synapse:/etc
       - {{ services_dir }}/synapse:/data
-{% if ma1sd_enabled == True %}
+{% if ma1sd_enabled == true %}
       - {{ services_dir }}/synapse/rest_auth_provider.py:/usr/local/lib/python3.7/site-packages/rest_auth_provider.py
-{% endif %}  
+{% endif %}
     depends_on:
       - db
     ports:
       - 8008:8008/tcp
 
   db:
-    image: docker.io/postgres:10-alpine:latest
+    image: docker.io/postgres:10-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD={{psql_pass}}
@@ -28,7 +28,7 @@ services:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
     expose:
       - 5432
-{% if ma1sd_enabled == True %}
+{% if ma1sd_enabled == true %}
   ma1sd:
     image: ma1uta/ma1sd:latest
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       - 8090:8090/tcp
 {% endif %}
 
-{% if coturn_enabled == True %}
+{% if coturn_enabled == true %}
   coturn:
     image: monogramm/docker-coturn:latest
     restart: unless-stopped
@@ -52,9 +52,9 @@ services:
     network_mode: host
 {% endif %}
 
-{% if nginx_enabled == True %}
+{% if nginx_enabled == true %}
   nginx:
-    image: nginx:alpine:latest
+    image: nginx:alpine
     restart: unless-stopped
     ports:
       - "80:80"

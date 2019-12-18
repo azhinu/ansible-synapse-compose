@@ -128,7 +128,7 @@
   become: "{{ docker_pip_sudo | bool }}"
   pip:
     name: pip
-    state: latest
+    state: forcereinstall
   register: _pkg_result
   until: _pkg_result is succeeded
   when: docker_pip_upgrade | bool
@@ -245,3 +245,9 @@
     - docker_compose | bool
     - docker_compose_no_pip | bool
     - not _docker_compose_file.stat.exists
+
+- name: Ensure docker is started
+  service:
+    name: docker
+    state: started
+    enabled: yes

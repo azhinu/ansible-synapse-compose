@@ -1,0 +1,21 @@
+---
+- name: Determine Python interpreter
+  import_playbook: determine_python_interpreter.yml
+
+- hosts: test-host
+  vars:
+    docker_versions:
+      Ubuntu: 18.06.3~ce~3-0~ubuntu
+      Debian: 18.03.1~ce-0~debian
+      CentOS: 18.09.8-3.el7
+  tasks:
+    - name: Install Docker CE for {{ ansible_distribution }}
+      include_role:
+        name: haxorof.docker_ce
+      vars:
+        docker_version: "{{ docker_versions[ansible_distribution] }}"
+
+    - name: Run hello-world
+      become: yes
+      shell: docker run --rm hello-world
+      changed_when: false

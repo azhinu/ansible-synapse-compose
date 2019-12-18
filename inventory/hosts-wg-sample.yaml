@@ -1,0 +1,11 @@
+all:
+  hosts:
+    matrix.local:
+      wireguard_address: "10.1.0.1/24"
+      wireguard_endpoint: "" #This server doesn't have a public address
+    nginx.local: #Ansible host
+      wireguard_address: "10.1.0.2/24" #WG address
+      wireguard_endpoint: "nginx.example.com" #Public address
+
+  vars:
+    ansible_ssh_user: user

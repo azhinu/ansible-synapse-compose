@@ -4,6 +4,6 @@
 ## Generate random secret for coturn config
 coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 ## Coturn server domain name
-synapse_coturn_address: coturn.local
+coturn_server_address: hostvars[inventory_hostname]
 ## Coturn dir location
 services_dir: /opt

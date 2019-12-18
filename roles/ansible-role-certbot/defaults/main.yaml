@@ -1,5 +1,6 @@
 ---
-
+#Stop any web services
+stop_services: false
 # Parameters used when creating new Certbot certs.
 certbot_certs: []
 # - email: janedoe@example.com
@@ -9,10 +10,10 @@ certbot_certs: []
 # - domains:
 #     - example3.com
 certbot_create_command: >-
-  {{ certbot_script }} certonly --standalone --noninteractive --agree-tos
+  certbot-auto certonly --standalone --noninteractive --agree-tos
   --register-unsafely-without-email
-  -d {{ cert_item.domains | join(',') }}
+  -d {{ cert_item.domains | join('') }}
 certbot_create_standalone_stop_services:
-  - nginx
+   - nginx
   # - apache
   # - varnish

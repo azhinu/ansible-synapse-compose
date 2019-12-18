@@ -916,7 +916,7 @@ bcrypt_rounds: 14
 # (By default, no suggestion is made, so it is left up to the client.
 # This setting is ignored unless public_baseurl is also set.)
 #
-default_identity_server: {{synapse_default_identity_server}}
+default_identity_server: ma1sd
 
 # The list of identity servers trusted to verify third party
 # identifiers by this server.
@@ -1623,5 +1623,5 @@ opentracing:
     #
     #  logging:
     #    false
-    
+
 #################END######################

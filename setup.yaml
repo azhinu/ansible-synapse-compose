@@ -1,0 +1,63 @@
+---
+- name: Pre tasks
+  hosts: all
+  become: true
+  pre_tasks:
+    - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
+      command: authconfig --disablefingerprint --update
+
+- name: "Set up a Matrix server"
+  hosts: matrix_servers
+  become: true
+  roles:
+    # - ansible-role-docker-ce
+    - ansible-synapse-docker
+
+- name: "Set up a Coturn server"
+  hosts: coturn_servers
+  become: true
+  roles:
+    - ansible-role-docker-ce
+    - ansible-role-coturn
+
+- name: "Set up a OpenLDAP server"
+  hosts: ldap_servers
+  become: true
+  roles:
+    # - ansible-role-docker-ce
+    - ansible-role-ldap
+
+- name: "Set up a Nginx server"
+  hosts: nginx_servers
+  become: true
+  roles:
+    - ansible-role-certbot
+    - ansible-role-selinux-utils
+    - ansible-role-nginx
+    - ansible-role-nginx-proxy
+  vars:
+    certbot_certs:
+      - domains: "{{nginx_proxy_server_name}}"
+    nginx_proxy_backends:
+    - location: /
+      server: http://10.1.0.1:80
+    - location: /ldap-admin/
+      server: http://10.1.0.1:8180
+
+    nginx_proxy_ssl: true
+    nginx_proxy_ssl_certificate: /etc/letsencrypt/live/{{nginx_proxy_server_name}}/cert.pem
+    nginx_proxy_ssl_certificate_key: /etc/letsencrypt/live/{{nginx_proxy_server_name}}/privkey.pem
+    nginx_proxy_http2: true
+    nginx_proxy_force_ssl: true
+    nginx_proxy_hsts_age: 31536000
+    nginx_proxy_conf_http:
+      - "client_max_body_size 500m"
+      - "server_tokens off"
+      - "proxy_request_buffering off"
+      - "proxy_set_header X-Forwarded-For $remote_addr"
+
+- name: "Setup certbot certs"
+  hosts: certbot
+  become: true
+  roles:
+    - ansible-role-certbot

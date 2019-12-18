@@ -1,0 +1,6 @@
+---
+- name: Verify that Docker is working
+  hosts: test-host
+  tasks:
+    - name: Tasks to verify basic Docker function
+      include_tasks: tasks_verify_docker.yml

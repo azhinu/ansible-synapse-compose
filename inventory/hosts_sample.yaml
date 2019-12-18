@@ -1,13 +1,15 @@
 #Hosts to install matrix-synapse bundle
-matrix_servers:
+all:
   hosts:
-    matrix.local: ansible_ssh_user=user ansible_become_pass=pass ansible_ssh_private_key_file=./key.pem
-  vars:
-    ###Install options
+  vars: #Global vars
+    ansible_ssh_user: user
+
+   #Start Synapse vars:
+    ###Install options for matrix-synapse bundle
     services_dir: /opt/matrix
     ma1sd_enabled: true
     coturn_enabled: false
-    nginx_enabled: true
+    nginx_enabled: false
     riot_enabled: false
     riot_version: v1.5.5
     start_services_after_install: true
@@ -22,13 +24,10 @@ matrix_servers:
     ###To use internal coturn server set "synapse_coturn_address: coturn". Another way set to coturn server address.
     synapse_coturn_address: coturn
 
-    #Create matrix user with admin privs. To use this option set 'start_services_after_install' to true
-    synapse_create_admin_user: true
-    synapse_admin_user: synapse_admin
-    synapse_admin_pass: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
-
     #Enable messanges cleanup script
-    synapse_cleanup_enabled: true
+    synapse_create_admin_user: false
+    synapse_admin_user: synapse_admin
+    synapse_admin_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 
     coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
     synapse_registration_shared_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
@@ -40,9 +39,9 @@ matrix_servers:
     #####https://github.com/ma1uta/ma1sd
     #####Config file locates at /opt/ma1sd
     ma1sd_ldap_enabled: true
-    ma1sd_ldap_host: '{{ldap_servers.hosts}}' #LDAP server address
+    ma1sd_ldap_host: '{{hostvars[ldap_servers].inventory_hostname}}' #LDAP server address
     ma1sd_ldap_port: '389' #LDAP server port
-    ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=local' #Example for user admin at matrix.local LDAP server
+    ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=lt,DC=loc' #Example for user admin at matrix.local LDAP server
     ma1sd_ldap_bindPassword: '{{LDAP_ADMIN_PASSWORD}}' #By default using password from ldap role
     ma1sd_ldap_baseDNs:
       - 'OU=users,DC=matrix,DC=local'
@@ -50,37 +49,35 @@ matrix_servers:
     ma1sd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
     ma1sd_ldap_ldap_attribute_name: 'cn'
 
+   #END Synapse vars!
 
-    ###Nginx
-    nginx_synapse_domain: {{synapse_server_name}} #By default using synapse server name
-    nginx_riot_domain: riot.{{synapse_server_name}} #By default using synapse server name
-    nginx_tls_disabled: true
+   #Start Coturn vars
+    coturn_server_address: "{{inventory_hostname}}"
+   #END Coturn vars!
 
-#Host to install coturn server
-coturn_servers:
-  hosts:
-   #coturn.local:
-  vars:
-    coturn_server_address: coturn.example.org
-    ## Generate random secret for coturn config
-    coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
-    ## Coturn dir location
-    services_dir: /opt
-
-#Host to install LDAP server
-ldap_server:
-  hosts:
-    #matrix.local
-  vars:
+   #Start LDAP vars:
     LDAP_PHP_ADMIN: True
     LDAP_ORGANISATION: "Matrix-Synapse"
-    LDAP_DOMAIN: "matrix.local"
-    LDAP_ADMIN_PASSWORD: "{{ lookup('password', '/tmp/passwordfile length=14 chars=ascii_letters,digits') }}"
-#Host to install Nginx proxy server
-#By default nginx proxy pass the matrix-synapse server with TLS redirection
-nginx_servers:
-  hosts:
-    #matrix.example.org
-  vars:
-    nginx_proxy_domain: matrix.example.org
-    nginx_proxy_backend: {{synapse_server_name}} #By default using synapse server name as synapse backend address.
+    LDAP_DOMAIN: "{{inventory_hostname}}"
+    LDAP_ADMIN_PASSWORD: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
+    #END LDAP vars!
+
+    #Start Nginx vars:
+    nginx_proxy_server_name: matrix.example.com #Public address for Synapse
+
+  children:
+    matrix_servers:
+      hosts:
+        matrix.local:
+
+    coturn_servers:
+      hosts:
+       coturn.local:
+
+    ldap_servers:
+      hosts:
+        #matrix.local
+
+    nginx_servers:
+      hosts:
+        #matrix.example.org

@@ -44,10 +44,19 @@ Nginx proxy is the entry point of Matrix-Synapse. This role should be applied to
 
 ### Installation
 
+If you will use Wireguard, apply it first:
+
+1. Edit inventory/hosts-wg-sample.yaml
+2. run
+
+		ansible-playbook -i inventory/hosts-wg-sample.yaml setup_wg.yaml  --ask-become-pass
+
+Then apply Matrix-Synapse
+
 1. Add hosts to inventory/hosts file
 2. Edit vars in inventory/hosts file
 3. Run
 
-	    ansible-playbook -i inventory/hosts setup.yml
+	    ansible-playbook -i inventory/hosts.yaml setup.yaml --ask-become-pass
 
 All credentials will be shown after successful deployment. To run role again put creds to the inventory vars.

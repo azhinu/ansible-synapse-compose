@@ -11,7 +11,7 @@
   pip:
     name: psycopg2-binary
     state: latest
-    
+
 - name: Postgre initial start
   docker_container:
     name: psql-init
@@ -25,6 +25,11 @@
         type: bind
     ports:
       - "5432:5432"
+
+- name: Wait for psql starts
+  wait_for:
+    port: 5432
+    delay: 10
 
 - name: Create synapse DB
   postgresql_db:
@@ -49,4 +54,3 @@
   docker_container:
     name: psql-init
     state: stopped
-  

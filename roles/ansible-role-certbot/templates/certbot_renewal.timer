@@ -1,0 +1,8 @@
+[Unit]
+Description=Try to renew certbot certs weekly
+
+[Timer]
+OnCalendar=weekly
+
+[Install]
+WantedBy=multi-user.target

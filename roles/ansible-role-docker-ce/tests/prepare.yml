@@ -1,0 +1,82 @@
+---
+- name: Setup Python on host
+  import_playbook: setup_python.yml
+
+- name: Determine Python interpreter
+  import_playbook: determine_python_interpreter.yml
+
+- name: Upgrade host
+  import_playbook: host_upgrade.yml
+
+- hosts: test-host
+  tasks:
+    - name: Print LSB information
+      debug:
+        var: ansible_lsb
+      when: ansible_lsb is defined
+
+    - name: Print distribution
+      debug:
+        msg: "{{ ansible_distribution}}, {{ ansible_distribution_release }}, {{ ansible_distribution_major_version }}"
+
+    - name: Print Kernel version
+      debug:
+        var: ansible_kernel
+      when: ansible_kernel is defined
+
+    - name: Print Ansible version
+      debug:
+        var: ansible_version.full
+
+    - name: Ensure haveged is installed
+      become: true
+      package:
+        name: haveged
+        state: present
+
+    - name: Ensure git is installed
+      become: true
+      package:
+        name: git
+        state: present
+      when: docker_bench_security is defined
+
+    - name: Ensure Docker Bench Security is cloned
+      git:
+        repo: "https://github.com/docker/docker-bench-security.git"
+        dest: /home/vagrant/docker-bench-security
+        version: master
+      when: docker_bench_security is defined
+
+    # https://github.com/haxorof/ansible-role-docker-ce/issues/107
+    - name: Turn off SELinux otherwise Docker fails to run hello-world when Docker is not configured with selinux
+      become: yes
+      selinux:
+        policy: targeted
+        state: permissive
+      when:
+        - ansible_distribution == "Fedora"
+        - ansible_distribution_major_version | int == 28
+
+    - name: Check that /etc/systemd/resolved.conf exists
+      stat:
+        path: /etc/systemd/resolved.conf
+      register: _resolved_exists
+
+    - name: Turn off DNSSEC which can cause resolution problems during tests in Ubuntu
+      become: yes
+      replace:
+        path: /etc/systemd/resolved.conf
+        regexp: '^DNSSEC=yes\s*$'
+        replace: "DNSSEC=no"
+      register: _resolved
+      when: _resolved_exists.stat.exists | bool
+
+    - name: Restart systemd-resolved
+      become: yes
+      service:
+        name: systemd-resolved
+        state: restarted
+      when:
+        - _resolved is defined
+        - _resolved is changed
