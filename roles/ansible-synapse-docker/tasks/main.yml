@@ -45,15 +45,6 @@
     src: homeserver.yaml
     dest: "{{ services_dir }}/synapse/homeserver.yaml"
 
-- name: Add REST auth provider if needed
-  copy:
-    src: files/rest_auth_provider.py
-    dest: "{{ services_dir }}/synapse/rest_auth_provider.py"
-    owner: root
-    group: root
-    mode: '0755'
-  when: ma1sd_enabled
-
 - name: Enable Synapse messanges cleanup
   include_tasks: synapse_cleanup.yml
   when: synapse_cleanup_enabled
@@ -63,11 +54,6 @@
   include_tasks: psql.yml
 
 ###Configurate optional services
-##ma1sd
-- name: Install ma1sd
-  include_tasks: ma1sd.yml
-  when: ma1sd_enabled
-
 ##Coturn
 - name: Install coturn
   include_tasks: coturn.yml

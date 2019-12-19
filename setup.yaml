@@ -40,8 +40,6 @@
     nginx_proxy_backends:
     - location: /_matrix
       server: http://10.1.0.1:8008
-    - location: /_matrix/identity
-      server: http://10.1.0.1:8090
     - location: /ldap-admin/
       server: http://10.1.0.1:8180/
 

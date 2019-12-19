@@ -11,9 +11,6 @@ services:
       # You may either store all the files in a local folder
       - {{ services_dir }}/synapse:/etc
       - {{ services_dir }}/synapse:/data
-{% if ma1sd_enabled == true %}
-      - {{ services_dir }}/synapse/rest_auth_provider.py:/usr/local/lib/python3.7/site-packages/rest_auth_provider.py
-{% endif %}
     depends_on:
       - db
     ports:
@@ -28,20 +25,6 @@ services:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
     expose:
       - 5432
-{% if ma1sd_enabled == true %}
-  ma1sd:
-    image: ma1uta/ma1sd:latest
-    restart: unless-stopped
-    environment:
-      - MATRIX_DOMAIN={{synapse_server_name}}
-    volumes:
-      - {{ services_dir }}/ma1sd:/etc/ma1sd
-      - {{ services_dir }}/ma1sd:/var/ma1sd
-    depends_on:
-      - synapse
-    ports:
-      - 8090:8090/tcp
-{% endif %}
 
 {% if coturn_enabled == true %}
   coturn:

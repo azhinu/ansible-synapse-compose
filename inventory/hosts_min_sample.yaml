@@ -14,7 +14,6 @@ all:
         matrix.local:
           ###Install options
           services_dir: /opt/matrix
-          ma1sd_enabled: false
           coturn_enabled: true
           nginx_enabled: true
           riot_enabled: false

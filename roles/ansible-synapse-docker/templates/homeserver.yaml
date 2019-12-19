@@ -916,7 +916,7 @@ bcrypt_rounds: 14
 # (By default, no suggestion is made, so it is left up to the client.
 # This setting is ignored unless public_baseurl is also set.)
 #
-default_identity_server: ma1sd
+default_identity_server:
 
 # The list of identity servers trusted to verify third party
 # identifiers by this server.
@@ -1362,12 +1362,23 @@ password_config:
 #        #bind_password:
 #        #filter: "(objectClass=posixAccount)"
 
-
-{% if ma1sd_enabled == True %}
 password_providers:
-  - module: 'rest_auth_provider.RestAuthProvider'
-    config:
-      endpoint: 'http://ma1sd:8090'
+{% if synapse_ldap_enabled == True %}
+    - module: "ldap_auth_provider.LdapAuthProvider"
+      config:
+        enabled: true
+        mode: "search"
+        uri: "ldap://{{synapse_ldap_server}}"
+        start_tls: false
+        base: "{{synapse_ldap_base}}"
+        attributes:
+           uid: "cn"
+           mail: "email"
+           name: "givenName"
+         # Search auth if anonymous search not enabled
+        bind_dn: "{{synapse_ldap_bind_dn}}"
+        bind_password: "{{synapse_ldap_bind_pass}}"
+        # filter: "(objectClass=posixAccount)"
 {% endif %}
 
 # Clients requesting push notifications can either have the body of

@@ -14,11 +14,10 @@ All roles can be applied separately.
 - Synapse
 - PostgreSQL
 - Coturn
-- ma1sd
 - Riot-web
 - Nginx
 
-By default Matrix-Synapse bundle installs PostgreSQL, Synapse, ma1sd and Nginx without TLS.
+By default Matrix-Synapse bundle installs PostgreSQL, Synapse and Nginx without TLS.
 
 To install this role fill Matrix-Synapse server vars in inventory.
 
