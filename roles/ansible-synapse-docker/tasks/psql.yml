@@ -15,8 +15,9 @@
 - name: Postgre initial start
   docker_container:
     name: psql-init
-    image: docker.io/postgres:10-alpine
+    image: docker.io/postgres:alpine
     cleanup: true
+    auto_remove: true
     env:
       POSTGRES_PASSWORD="{{ psql_pass }}"
     mounts:
@@ -53,4 +54,4 @@
 - name: Stop postgres
   docker_container:
     name: psql-init
-    state: stopped
+    state: absent

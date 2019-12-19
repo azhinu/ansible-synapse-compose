@@ -12,10 +12,10 @@
     permanent: yes
     state: enabled
 
-# - name: Bounce firewalld
-#   service:
-#     name: firewalld
-#     state: restarted
+- name: Bounce firewalld
+  service:
+    name: firewalld
+    state: restarted
 
 - name: Check if certbot already exist.
   stat:

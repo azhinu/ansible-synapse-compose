@@ -1,4 +1,21 @@
 ---
+- name: Setup firewalld
+  firewalld:
+    service: ldaps
+    permanent: yes
+    state: enabled
+
+- name: setup firewalld
+  firewalld:
+    zone: public
+    service: ldap
+    permanent: yes
+    state: enabled
+
+- name: Bounce firewalld
+  service:
+    name: firewalld
+    state: restarted
 - name: Create LDAP directory
   become: true
   file:

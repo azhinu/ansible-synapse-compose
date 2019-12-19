@@ -1,4 +1,19 @@
 ---
+- debug:
+    msg:
+    - "Generated credentials:"
+    - "Postgre:"
+    - "  User: postgre"
+    - "  Pass: {{ psql_pass }}"
+    - "  User: synapse"
+    - "  Pass: {{ synapse_db_pass }}"
+    - "Synapse"
+    - "Turn secret: {{ coturn_secret }}"
+    - "Registration_secret: {{ synapse_registration_shared_secret }}"
+    - "Macaroon secret: {{ synapse_macaroon_secret_key }}"
+    - "Form secret: {{ synapse_form_secret }}"
+    - "Synapse admin user: {{synapse_admin_user}}"
+    - "Synapse admin pass: {{synapse_admin_pass}}"
 
 ###Configurate Synapse
 - name: Create Synapse directory
@@ -15,6 +30,7 @@
     image: matrixdotorg/synapse:latest
     interactive: true
     cleanup: true
+    auto_remove: true
     command: generate
     env:
       SYNAPSE_REPORT_STATS=no
@@ -36,11 +52,11 @@
     owner: root
     group: root
     mode: '0755'
-  when: ma1sd_enabled | bool
+  when: ma1sd_enabled
 
 - name: Enable Synapse messanges cleanup
   include_tasks: synapse_cleanup.yml
-  when: synapse_cleanup_enabled | bool
+  when: synapse_cleanup_enabled
 ###Configurate DB
 
 - name: Configurate Postgre
@@ -50,26 +66,24 @@
 ##ma1sd
 - name: Install ma1sd
   include_tasks: ma1sd.yml
-  when: ma1sd_enabled | bool
+  when: ma1sd_enabled
 
 ##Coturn
 - name: Install coturn
   include_tasks: coturn.yml
-  when: coturn_enabled | bool
+  when: coturn_enabled
   tags: test
 
 #Setting up Nginx
-
 - name: Install Nginx
   include_tasks: nginx.yml
-  when: not nginx_enabled
-  tags: test
+  when: nginx_enabled
 
 #Setting up riot-web
 
 - name: Install Riot
   include_tasks: riot.yml
-  when: riot_enabled | bool
+  when: riot_enabled
 
 
  ###Configurate docker-compose file
@@ -84,12 +98,18 @@
 - name: Start services
   docker_compose:
     project_src: "{{ services_dir }}"
-  when: start_services_after_install | bool
+  when: start_services_after_install
+
+- name: Wait for synapse starts
+  wait_for:
+    port: 8008
+    delay: 10
 
 ###Create Synapse admin user
 - name: Create Synapse admin user
-  command: 'register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -k {{synapse_registration_shared_secret}} http://localhost:8008'
-  when: start_services_after_install and synapse_create_admin_user | bool
+  command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -c /etc/homeserver.yaml http://localhost:8008'
+  when: start_services_after_install and synapse_create_admin_user
+  tags: test
 
 ###END
 - debug:

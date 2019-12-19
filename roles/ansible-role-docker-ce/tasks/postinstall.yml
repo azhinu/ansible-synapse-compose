@@ -146,6 +146,11 @@
   environment:
     PYTHONWARNINGS: ignore
 
+- name: Fix docker-Compose
+  pip:
+    name: more-itertools>=4.0.0,<=5.0.0
+    state: forcereinstall
+
 # https://github.com/docker/docker-py/issues/1502
 - name: Workaround for issue - No module named ssl_match_hostname (Python 2.7)
   become: yes
@@ -241,6 +246,7 @@
         src: /usr/local/bin/docker-compose
         dest: /usr/bin/docker-compose
         state: link
+
   when:
     - docker_compose | bool
     - docker_compose_no_pip | bool

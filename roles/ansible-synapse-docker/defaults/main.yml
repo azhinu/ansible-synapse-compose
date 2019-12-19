@@ -5,7 +5,7 @@
 ###Install options
 services_dir: /opt/matrix
 ma1sd_enabled: false
-coturn_enabled: "false"
+coturn_enabled: false
 nginx_enabled: false
 riot_enabled: false
 riot_version: v1.5.5

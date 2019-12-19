@@ -1,4 +1,4 @@
 inventory/*
 !/inventory/hosts_sample.yaml
-!/inventory/hosts-wg-sample.yaml
+!/inventory/hosts_wg-sample.yaml
 !/inventory/hosts_min_sample.yaml

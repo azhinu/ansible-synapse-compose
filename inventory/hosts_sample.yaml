@@ -25,7 +25,9 @@ all:
     synapse_coturn_address: coturn
 
     #Enable messanges cleanup script
-    synapse_create_admin_user: false
+    synapse_cleanup_enabled: true
+    synapse_create_admin_user: true
+
     synapse_admin_user: synapse_admin
     synapse_admin_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 
@@ -39,9 +41,9 @@ all:
     #####https://github.com/ma1uta/ma1sd
     #####Config file locates at /opt/ma1sd
     ma1sd_ldap_enabled: true
-    ma1sd_ldap_host: '{{hostvars[ldap_servers].inventory_hostname}}' #LDAP server address
+    ma1sd_ldap_host: 'matrix.local' #LDAP server address
     ma1sd_ldap_port: '389' #LDAP server port
-    ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=lt,DC=loc' #Example for user admin at matrix.local LDAP server
+    ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=local' #Example for user admin at matrix.local LDAP server
     ma1sd_ldap_bindPassword: '{{LDAP_ADMIN_PASSWORD}}' #By default using password from ldap role
     ma1sd_ldap_baseDNs:
       - 'OU=users,DC=matrix,DC=local'
@@ -56,7 +58,7 @@ all:
    #END Coturn vars!
 
    #Start LDAP vars:
-    LDAP_PHP_ADMIN: True
+    LDAP_PHP_ADMIN: true
     LDAP_ORGANISATION: "Matrix-Synapse"
     LDAP_DOMAIN: "{{inventory_hostname}}"
     LDAP_ADMIN_PASSWORD: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
