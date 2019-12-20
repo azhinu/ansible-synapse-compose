@@ -1,7 +1,6 @@
 ---
-  
+
 - name: Create coturn directory
-  become: true
   file:
     path: "{{ services_dir }}/coturn"
     state: directory
@@ -10,18 +9,11 @@
     mode: 0775
     recurse: yes
 
-- name: Copy coturn config
-  become: true
+- name: Copy docker-compose file
   template:
-    src: coturn.conf
-    dest: "{{ services_dir }}/coturn/conf"
-    
-- name: Start coturn
-  docker_container:
-    name: coturn
-    image: monogramm/docker-coturn:latest
-    mounts:
-      - target: /srv
-        source: "{{ services_dir }}/coturn"
-        type: bind
-    network_mode: host
+    src: docker-compose.yaml
+    dest: "{{ services_dir }}/coturn/docker-compose.yaml"
+
+- name: Start service
+  docker_compose:
+    project_src: "{{ services_dir }}/coturn"

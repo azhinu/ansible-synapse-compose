@@ -7,9 +7,3 @@
     group: root
     mode: 0775
     recurse: yes
-
-- name: Copy coturn config
-  become: true
-  template:
-    src: coturn.conf
-    dest: "{{ services_dir }}/coturn/conf"
