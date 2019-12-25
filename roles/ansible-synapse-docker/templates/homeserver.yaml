@@ -1350,7 +1350,7 @@ password_providers:
         start_tls: false
         base: "{{synapse_ldap_base}}"
         attributes:
-           uid: "cn"
+           uid: "uid"
            mail: "email"
            name: "givenName"
          # Search auth if anonymous search not enabled
@@ -1406,7 +1406,7 @@ password_providers:
 #
 user_directory:
   enabled: true
-  search_all_users: false
+  search_all_users: true
 
 
 # User Consent configuration

@@ -14,10 +14,10 @@ url= 'localhost:8008/_matrix/client/r0/admin/purge_history/'
 def get_auth_token(x,y):
     """ Return auth token after login on service
         x - str: login
- y - str: password
- auth_key - str
+        y - str: password
+        auth_key - str
     """
-    auth_url='https://localhost:8448/_matrix/client/r0/login'
+    auth_url='http://localhost:8008/_matrix/client/r0/login'
     auth_data= {"type":"m.login.password", "user":x, "password":y}
     _data=json.dumps(auth_data)
     auth=requests.post(auth_url,headers={'content-type':'application/json'},data=_data,verify=False)
@@ -32,17 +32,17 @@ def get_room_list():
     _room_list=cur.fetchall()
     room_list= []
     for row in _room_list:
- row=row[0]
- room_list.append(row)
-    return room_list
+      row=row[0]
+      room_list.append(row)
+      return room_list
 def get_last_message(x):
     """ Return last message timstamp
- x - str: room id
- message - timestamp
-    """ 
+        x - str: room id
+        message - timestamp
+    """
     cur.execute('SELECT origin_server_ts FROM events WHERE room_id=%s ORDER BY origin_server_ts DESC LIMIT 1',(x,))
     message=cur.fetchone()
-    message=message[0]    
+    message=message[0]
     return message
 def make_url_request(x,y,z):
     _url=url+x
@@ -50,7 +50,7 @@ def make_url_request(x,y,z):
     _data={'delete_local_events': True, 'purge_up_to_ts': y }
     data=json.dumps(_data)
     r=requests.post(_url,headers=headers,data=data)
-#    print(r.text)
+    print(r.text)
 
 conn=psycopg2.connect(dbname=db_name, user=db_user, password=db_passwd, host=db_host)
 cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

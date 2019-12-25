@@ -29,20 +29,15 @@
     - name: Update all packages
       package: name=* state=latest
 
-    - name: Stopping coturn
-      docker_container:
-        name: coturn
+    - name: Shutting down docker containers
+      docker_compose:
+        project_src: "{{ services_dir }}/coturn"
         state: absent
 
-    - name: Starting coturn
-      docker_container:
-        name: coturn
-        image: monogramm/docker-coturn:latest
-        mounts:
-          - target: /srv
-            source: "{{ services_dir }}/coturn"
-            type: bind
-        network_mode: host
+    - name: Updating docker containers
+      docker_compose:
+        project_src: "{{service_dir}}/coturn"
+
 - name: Updating
   hosts: ldap_server
   tasks:
