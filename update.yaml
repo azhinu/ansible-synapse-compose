@@ -13,14 +13,11 @@
     - name: Update all packages
       package: name=* state=latest
 
-    - name: Shutting down docker containers
-      docker_compose:
-        project_src: "{{ services_dir }}"
-        state: absent
-
     - name: Updating docker containers
       docker_compose:
         project_src: "{{service_dir}}"
+        state: present
+        build: yes
 
 - name: Updating Coturn servers
   hosts: coturn_servers
@@ -29,29 +26,20 @@
     - name: Update all packages
       package: name=* state=latest
 
-    - name: Shutting down docker containers
-      docker_compose:
-        project_src: "{{ services_dir }}/coturn"
-        state: absent
-
     - name: Updating docker containers
       docker_compose:
-        project_src: "{{service_dir}}/coturn"
+        project_src: "{{ services_dir }}/ldap/"
+        state: present
+        build: yes
 
 - name: Updating
   hosts: ldap_server
   tasks:
-    - name: Stopping LDAP
-      docker_container:
-        name: openldap_server
-        state: absent
-    - name: Stopping phpLDAPadmin
-      docker_container:
-        name: openldap_admin
-        state: absent
-      when: LDAP_PHP_ADMIN | bool
-  roles:
-    - ansible-role-ldap
+    - name: Updating LDAP
+      docker_compose:
+        project_src: "{{service_dir}}/coturn"
+        state: present
+        build: yes
 
 - name: Updating Nginx
   hosts: nginx_servers

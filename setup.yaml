@@ -44,7 +44,7 @@
       server: http://10.1.0.1:8180/
 
     nginx_proxy_ssl: true
-    nginx_proxy_ssl_certificate: /etc/letsencrypt/live/{{nginx_proxy_server_name}}/cert.pem
+    nginx_proxy_ssl_certificate: /etc/letsencrypt/live/{{nginx_proxy_server_name}}/fullchain.pem
     nginx_proxy_ssl_certificate_key: /etc/letsencrypt/live/{{nginx_proxy_server_name}}/privkey.pem
     nginx_proxy_http2: true
     nginx_proxy_force_ssl: true
