@@ -1,3 +1,12 @@
 [submodule "roles/ansible-role-wireguard"]
-	path = roles/ansible-role-wireguard
 	url = https://github.com/githubixx/ansible-role-wireguard
+	active = true
+[submodule "roles/ansible-role-nginx-proxy"]
+	url = https://github.com/ome/ansible-role-nginx-proxy
+	active = true
+[submodule "roles/ansible-role-nginx"]
+	url = https://github.com/ome/ansible-role-nginx
+	active = true
+[submodule "roles/ansible-role-selinux-utils"]
+	url = https://github.com/ome/ansible-role-selinux-utils
+	active = true
