@@ -4,14 +4,14 @@
     port: 60535-62535/udp
     permanent: yes
     state: enabled
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
 
 - name: Enable coturn firewalld rule
   firewalld:
     port: 3478/udp
     permanent: yes
     state: enabled
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
 
 - name: Create coturn directory
   file:
