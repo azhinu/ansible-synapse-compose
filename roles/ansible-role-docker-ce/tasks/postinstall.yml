@@ -146,6 +146,8 @@
   environment:
     PYTHONWARNINGS: ignore
 
+- name: Upgrade PiP
+  command: pip install --upgrade pip 
 - name: Fix docker-Compose
   pip:
     name: more-itertools>=4.0.0,<=5.0.0
