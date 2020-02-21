@@ -7,3 +7,6 @@
 [submodule "roles/ansible-role-nginx"]
 	path = roles/ansible-role-nginx
 	url = https://github.com/ome/ansible-role-nginx
+[submodule "ansible-role-selinux-utils"]
+	path = ansible-role-selinux-utils
+	url = https://github.com/ome/ansible-role-selinux-utils
