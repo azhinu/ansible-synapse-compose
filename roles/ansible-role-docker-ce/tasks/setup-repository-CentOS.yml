@@ -65,8 +65,10 @@
 - name: Install dev pgks
   yum:
     name: "{{item}}"
-    state: present
+    state: latest
   loop:
     - "@Development tools"
     - "python2-devel"
     - "python3-devel"
+    - "python-pip"
+    - "python3-pip"
