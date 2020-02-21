@@ -4,9 +4,12 @@
 [submodule "roles/ansible-role-nginx-proxy"]
 	url = https://github.com/ome/ansible-role-nginx-proxy
 	active = true
+	path = roles/ansible-role-nginx-proxy
 [submodule "roles/ansible-role-nginx"]
 	url = https://github.com/ome/ansible-role-nginx
 	active = true
+	path = roles/ansible-role-nginx
 [submodule "roles/ansible-role-selinux-utils"]
 	url = https://github.com/ome/ansible-role-selinux-utils
 	active = true
+	path = roles/ansible-role-selinux-utils
