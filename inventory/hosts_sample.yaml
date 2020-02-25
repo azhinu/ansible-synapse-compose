@@ -38,7 +38,7 @@ all:
     #LDAP
     synapse_ldap_enabled: true
     synapse_ldap_server: matrix.local:389
-    synapse_ldap_base: ou=Users,dc=matirx
+    synapse_ldap_base: dc=matirx
     synapse_ldap_bind_dn: cn=admin,dc=matirx
     synapse_ldap_bind_pass: "{{LDAP_ADMIN_PASSWORD}}"
    #END Synapse vars!

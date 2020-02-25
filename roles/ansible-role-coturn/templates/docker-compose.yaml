@@ -13,8 +13,8 @@ services:
       - STATIC_AUTH_SECRET={{coturn_secret}}
       # - TLS_CERT=/srv/cert.pem
       # - TLS_KEY=/srv/pkey.pem
-      # - NO_CLI=1
-      - REALM=myturnserver
+      - NO_CLI=1
+      - REALM={{synapse_server_name}}
       - VERBOSE=1
       - DEBUG=0
       - PROD=1
