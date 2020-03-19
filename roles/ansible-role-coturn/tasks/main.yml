@@ -8,10 +8,24 @@
 
 - name: Enable coturn firewalld rule
   firewalld:
-    port: 3478/udp
+    port: 3478/tcp
     permanent: yes
     state: enabled
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
+
+- name: Enable coturn UFW rule
+  ufw:
+    rule: allow
+    port: 60535:62535
+    proto: udp
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  
+- name: Enable coturn UFW rule
+  ufw:
+    rule: allow
+    port: 3478
+    proto: tcp
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Create coturn directory
   file:
@@ -21,7 +35,7 @@
     group: root
     mode: 0775
     recurse: yes
-
+    
 - name: Copy docker-compose file
   template:
     src: docker-compose.yaml
