@@ -3,6 +3,6 @@
 
 ## Generate random secret for coturn config
 coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
-## Coturn server domain name
-## Coturn dir location
-services_dir: /opt
+
+cert: /etc/letsencrypt/live/{{ fqdn }}/fullchain.pem
+privkey: /etc/letsencrypt/live/{{ fqdn }}/privkey.pem

@@ -9,7 +9,7 @@ db_name='synapse'
 db_user='synapse'
 db_passwd='{{synapse_db_pass}}'
 db_host='localhost'
-url= 'localhost:8008/_matrix/client/r0/admin/purge_history/'
+url='http://localhost:8008/_matrix/client/r0/admin/purge_history/'
 
 def get_auth_token(x,y):
     """ Return auth token after login on service

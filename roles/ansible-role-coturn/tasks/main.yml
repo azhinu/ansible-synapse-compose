@@ -19,7 +19,7 @@
     port: 60535:62535
     proto: udp
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  
+
 - name: Enable coturn UFW rule
   ufw:
     rule: allow
@@ -27,20 +27,22 @@
     proto: tcp
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Create coturn directory
-  file:
-    path: "{{ services_dir }}/coturn"
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-    recurse: yes
-    
-- name: Copy docker-compose file
-  template:
-    src: docker-compose.yaml
-    dest: "{{ services_dir }}/coturn/docker-compose.yaml"
+- name: Get public IP
+  ipify_facts:
+  register: public_ip
 
-- name: Start service
-  docker_compose:
-    project_src: "{{ services_dir }}/coturn"
+- name: Install Coturn
+  package:
+    name: coturn
+    state: latest
+
+- name: Configure coturn server
+  template:
+    src: turnserver.conf
+    dest: /etc/coturn/turnserver.conf
+
+- name: Start and enable Coturn
+  service:
+    name: coturn
+    state: started
+    enabled: true

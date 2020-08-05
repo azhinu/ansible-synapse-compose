@@ -2,8 +2,8 @@
 Description=Clear synapse messages
 
 [Service]
-Type=simple
-ExecStart=/usr/bin/python3 {{ services_dir }}/synapse/synapse_clear_history.py 
+Type=oneshot
+ExecStart=/usr/bin/python3 {{ services_dir }}/synapse/synapse_clear_history.py
 
 [Install]
 WantedBy=multi-user.target

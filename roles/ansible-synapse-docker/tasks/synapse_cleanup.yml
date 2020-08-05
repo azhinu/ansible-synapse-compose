@@ -14,18 +14,9 @@
     src: synapse_clear_history.timer
     dest: /usr/lib/systemd/system/synapse_clear_history.timer
 
-- name: Reload systemd
-  shell: systemctl daemon-reload
-
-- name: Enable history cleanup service
-  systemd:
-    name: synapse_clear_history.service
-    enabled: yes
-    daemon_reload: yes
-
 - name: Enable history cleanup timer
   systemd:
     name: synapse_clear_history.timer
     state: started
     enabled: yes
-    daemon_reload: yes
+    daemon_reload: true

@@ -105,15 +105,7 @@ pid_file: /data/homeserver.pid
 # listed here, since they correspond to unroutable addresses.)
 #
 federation_ip_range_blacklist:
-  - '127.0.0.0/8'
-  - '10.0.0.0/8'
-  - '172.16.0.0/12'
-  - '192.168.0.0/16'
-  - '100.64.0.0/10'
-  - '169.254.0.0/16'
-  - '::1/128'
-  - 'fe80::/64'
-  - 'fc00::/7'
+  - '0.0.0.0/0'
 
 # List of ports that Synapse should listen on, their purpose and their
 # configuration.
@@ -439,7 +431,7 @@ acme:
     #
     # If not set, defaults to your 'server_name'.
     #
-    domain: {{synapse_server_name}}
+    domain:
 
     # file to use for the account key. This will be generated if it doesn't
     # exist.
@@ -627,11 +619,11 @@ uploads_path: "/data/uploads"
 
 # The largest allowed upload size in bytes
 #
-#max_upload_size: 10M
+max_upload_size: 512M
 
 # Maximum number of pixels that will be thumbnailed
 #
-#max_image_pixels: 32M
+max_image_pixels: 32M
 
 # Whether to generate new thumbnails on the fly to precisely match
 # the resolution requested by the client. If true then whenever
@@ -639,7 +631,7 @@ uploads_path: "/data/uploads"
 # generate a new thumbnail. If false the server will pick a thumbnail
 # from a precalculated list.
 #
-#dynamic_thumbnails: false
+dynamic_thumbnails: true
 
 # List of thumbnails to precalculate when an image is uploaded.
 #
@@ -784,7 +776,7 @@ turn_allow_guests: true
 
 # Enable registration for new users.
 #
-#enable_registration: false
+enable_registration: "{{ synapse_registration_enabled}}"
 
 # Optional account validity configuration. This allows for accounts to be denied
 # any request after a given period.

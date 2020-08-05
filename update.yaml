@@ -19,20 +19,7 @@
         state: present
         build: yes
 
-- name: Updating Coturn servers
-  hosts: coturn_servers
-  become: true
-  tasks:
-    - name: Update all packages
-      package: name=* state=latest
-
-    - name: Updating docker containers
-      docker_compose:
-        project_src: "{{ services_dir }}/ldap/"
-        state: present
-        build: yes
-
-- name: Updating
+- name: Updating LDAP
   hosts: ldap_server
   tasks:
     - name: Updating LDAP
@@ -41,7 +28,7 @@
         state: present
         build: yes
 
-- name: Updating Nginx
+- name: Updating Proxy
   hosts: nginx_servers
   become: true
   tasks:

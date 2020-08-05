@@ -1,26 +1,29 @@
 ---
-- name: Setup firewalld
+- name: Setup firewalld: 443
   firewalld:
-    service: https
+    service: {{ item }}
     permanent: yes
     state: enabled
+  loop:
+    - 'https'
+    - 'http'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
 
-- name: setup firewalld
-  firewalld:
-    zone: public
-    service: http
-    permanent: yes
-    state: enabled
-
-- name: Bounce firewalld
+- name: Restart firewalld
   service:
     name: firewalld
     state: restarted
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
 
-- name: Check if certbot already exist.
-  stat:
-    path: /bin/certbot-auto
-  register: certbot_exist
+- name: Enable Web services UFW rule
+  ufw:
+    rule: allow
+    port: {{ item }}
+    proto: tcp
+  loop:
+    - 443
+    - 80
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Download certbot
   get_url:
@@ -28,12 +31,30 @@
     dest: /bin/certbot-auto
     mode: '0755'
     owner: 'root'
-  when: not certbot_exist.stat.exists
 
-- include_tasks: create-cert-standalone.yaml
-  with_items: "{{ certbot_certs }}"
-  loop_control:
-    loop_var: cert_item
+- name: "Certbpt creates certificate"
+  command: "certbot-auto certonly --nginx --register-unsafely-without-email --agree-tos -d {{ fqdn }}"
+  args:
+    creates: /etc/letsencrypt/live/{{ cert_item }}
 
-- name: Add certbot renewal service
-  include_tasks: certbot-renewal.yaml
+- name: Copy certbot renewal service
+  template:
+    src: certbot_renewal.service
+    dest: /usr/lib/systemd/system/certbot-renewal.service
+
+- name: Copy certbot renewal timer
+  template:
+    src: certbot_renewal.timer
+    dest: /usr/lib/systemd/system/certbot-renewal.timer
+
+- name: Enable certbot renewal service
+  systemd:
+    name: certbot-renewal.service
+    enabled: yes
+    daemon-reload: yes
+
+- name: Enable certbot renewal timer
+  systemd:
+    name: certbot-renewal.timer
+    state: started
+    enabled: yes

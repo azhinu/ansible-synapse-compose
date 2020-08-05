@@ -1,0 +1,51 @@
+---
+- name: "Add NGINX repo"
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+- name: Install Nginx
+  package:
+    name: nginx
+    state: latest
+
+- name: Install certbot packages
+  package:
+    name:
+      - python2-certbot-nginx
+    state: latest
+  when: nginx_use_certbot
+
+- name: Configure firewall
+  include: firewall.yml
+
+- name: "Create certificate"
+  command: "certbot certonly --nginx --register-unsafely-without-email --agree-tos -d {{ nginx_proxy_server_name }}"
+  args:
+    creates: /etc/letsencrypt/live/{{ fqdn }}
+  when: nginx_use_certbot
+
+- name: "Enable systemd timer for certbot"
+  service:
+    name: certbot-renew.timer
+    state: started
+    enabled: yes
+  when: nginx_use_certbot
+
+- name: Install Element-Web
+  include: element.yml
+
+- name: "Nginx: Configure default host"
+  template:
+    src: invalid_host.conf.j2
+    dest: /etc/nginx/conf.d/invalid_host.conf
+
+- name: "Nginx: Configure tls vhost"
+  template:
+    src: proxy.conf.j2
+    dest: /etc/nginx/conf.d/{{ nginx_proxy_server_name }}.conf
+
+- name: "Nginx: Start service"
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes

@@ -1,21 +1,4 @@
 ---
-- debug:
-    msg:
-    - "Generated credentials:"
-    - "Postgre:"
-    - "  User: postgre"
-    - "  Pass: {{ psql_pass }}"
-    - "  User: synapse"
-    - "  Pass: {{ synapse_db_pass }}"
-    - "Synapse"
-    - "Turn secret: {{ coturn_secret }}"
-    - "Registration_secret: {{ synapse_registration_shared_secret }}"
-    - "Macaroon secret: {{ synapse_macaroon_secret_key }}"
-    - "Form secret: {{ synapse_form_secret }}"
-    - "Synapse admin user: {{synapse_admin_user}}"
-    - "Synapse admin pass: {{synapse_admin_pass}}"
-
-###Configurate Synapse
 - name: Create Synapse directory
   file:
     path: "{{ services_dir }}/synapse"
@@ -40,47 +23,25 @@
         source: "{{ services_dir }}/synapse"
         type: bind
 
+- name: Get public IP
+  ipify_facts:
+  register: synapse_coturn_address
+  when: synapse_coturn_address == ''
+
 - name: Copy Synapse config
   template:
     src: homeserver.yaml
     dest: "{{ services_dir }}/synapse/homeserver.yaml"
 
-- name: Enable Synapse messanges cleanup
-  include_tasks: synapse_cleanup.yml
-  when: synapse_cleanup_enabled
-###Configurate DB
-
 - name: Configurate Postgre
   include_tasks: psql.yml
 
-###Configurate optional services
-##Coturn
-- name: Install coturn
-  include_tasks: coturn.yml
-  when: coturn_enabled
-  tags: test
-
-#Setting up Nginx
-- name: Install Nginx
-  include_tasks: nginx.yml
-  when: nginx_enabled
-
-#Setting up riot-web
-
-- name: Install Riot
-  include_tasks: riot.yml
-  when: riot_enabled
-
-
- ###Configurate docker-compose file
 - name: Copy docker-compose file
-  become: true
   template:
     src: docker-compose.yaml
     dest: "{{ services_dir }}/docker-compose.yaml"
 
 
-###Start services
 - name: Start services
   docker_compose:
     project_src: "{{ services_dir }}"
@@ -91,11 +52,18 @@
     port: 8008
     delay: 10
 
-###Create Synapse admin user
 - name: Create Synapse admin user
   command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -c /etc/homeserver.yaml http://localhost:8008'
   when: start_services_after_install and synapse_create_admin_user
-  tags: test
+
+- debug:
+    msg:
+    - "Cant create Admin user without services starting"
+    when: not start_services_after_install and synapse_create_admin_user
+
+- name: Enable Synapse messanges cleanup
+  include_tasks: synapse_cleanup.yml
+  when: synapse_cleanup_enabled
 
 ###END
 - debug:

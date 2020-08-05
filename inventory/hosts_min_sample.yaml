@@ -16,8 +16,8 @@ all:
           services_dir: /opt/matrix
           coturn_enabled: true
           nginx_enabled: true
-          riot_enabled: false
-          riot_version: v1.5.5
+          element_enabled: false
+          element_version: v1.7.3
           start_services_after_install: true
 
           ###Postgres

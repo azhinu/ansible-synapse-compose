@@ -3,7 +3,7 @@ Description=Renew certbot
 
 [Service]
 Type=simple
-ExecStart=/bin/certbot-auto renew
+ExecStart=/bin/certbot-auto renew --nginx
 
 [Install]
 WantedBy=multi-user.target

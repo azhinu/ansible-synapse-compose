@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   synapse:
     image: docker.io/matrixdotorg/synapse:latest
     restart: unless-stopped
@@ -14,7 +13,7 @@ services:
     depends_on:
       - db
     ports:
-      - 8008:8008/tcp
+      - {{ synapse_internal_ip }}:8008:8008/tcp
 
   db:
     image: docker.io/postgres:alpine
@@ -25,39 +24,3 @@ services:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
     ports:
       - 5432
-
-{% if coturn_enabled == true %}
-    coturn:
-      image: monogramm/docker-coturn:latest
-      container_name: coturn
-      environment:
-        - LISTENING_PORT=3478
-        #-  TLS_LISTENING_PORT=5349
-        - LISTEN_IPS={{ansible_default_ipv4.address}}
-        - RELAY_IP={{ansible_default_ipv4.address}}
-        - STATIC_AUTH_SECRET={{coturn_secret}}
-        - TLS_CERT=/srv/cert.pem
-        - TLS_KEY=/srv/pkey.pem
-        - NO_CLI=1
-        - REALM=myturnserver
-        - VERBOSE=1
-        - DEBUG=0
-        - PROD=1
-        #-  USER_DB=/srv/turnserver/db/turndb.sqlite
-        #-  LOG_FILE=/srv/turnserver/logs/turn.log
-        #-  PID_FILE=/srv/turnserver/turn.pid
-      restart: unless-stopped
-      network_mode: "host"
-{% endif %}
-
-{% if nginx_enabled == true %}
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - {{ services_dir }}/nginx/html:/usr/share/nginx/html:ro
-      - {{ services_dir }}/nginx/conf.d:/etc/nginx/conf.d:ro
-{% endif %}
