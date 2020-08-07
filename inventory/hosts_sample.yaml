@@ -73,8 +73,8 @@ all:
 
     ldap_servers:
       hosts:
-        #matrix.local
+        matrix.local
 
     nginx_servers:
       hosts:
-        #matrix.example.org
+        matrix.example.org

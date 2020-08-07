@@ -4,5 +4,5 @@
 ## Generate random secret for coturn config
 coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 
-cert: /etc/letsencrypt/live/{{ fqdn }}/fullchain.pem
-privkey: /etc/letsencrypt/live/{{ fqdn }}/privkey.pem
+nginx_tls_cert_path: "/etc/letsencrypt/live/{{ nginx_proxy_server_name }}/fullchain.pem"
+nginx_tls_key_path: "/etc/letsencrypt/live/{{ nginx_proxy_server_name }}/privkey.pem"

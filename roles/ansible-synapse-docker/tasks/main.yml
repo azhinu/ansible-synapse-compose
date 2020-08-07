@@ -53,7 +53,7 @@
     delay: 10
 
 - name: Create Synapse admin user
-  command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -c /etc/homeserver.yaml http://localhost:8008'
+  command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{synapse_admin_user}} -p {{synapse_admin_pass}} -a -k {{synapse_registration_shared_secret}} http://localhost:8008'
   when: start_services_after_install and synapse_create_admin_user
 
 - debug:
@@ -63,7 +63,7 @@
 
 - name: Enable Synapse messanges cleanup
   include_tasks: synapse_cleanup.yml
-  when: synapse_cleanup_enabled
+  when: synapse_cleanup_enabled and synapse_create_admin_user and start_services_after_install
 
 ###END
 - debug:

@@ -1,10 +1,10 @@
-nginx_proxy_server_name: matrix.example.com
+nginx_proxy_server_name: "matrix.example.com"
 nginx_use_certbot: true
-nginx_tls_cert_path: /etc/letsencrypt/live/{{ nginx_proxy_server_name }}/fullchain.pem
-nginx_tls_key_path: /etc/letsencrypt/live/{{ nginx_proxy_server_name }}/privkey.pem
+nginx_tls_cert_path: "/etc/letsencrypt/live/{{ nginx_proxy_server_name }}/fullchain.pem"
+nginx_tls_key_path: "/etc/letsencrypt/live/{{ nginx_proxy_server_name }}/privkey.pem"
 
-element_install_path: /var/www/element-web
-element_default_hs: {{ nginx_proxy_server_name }}
+element_install_path: "/var/www/element-web"
+element_default_hs: "{{ nginx_proxy_server_name }}"
 element_enabled: false
 element_version: v1.7.3
 
@@ -12,6 +12,3 @@ synapse_internal_ip: 127.0.0.1
 ldap_internal_ip: 127.0.0.1
 
 LDAP_PHP_ADMIN: false
-
-synapse_internal_ip: 127.0.0.1
-ldap_internal_ip: 127.0.0.1

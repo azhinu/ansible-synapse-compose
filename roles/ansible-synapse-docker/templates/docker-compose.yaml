@@ -2,13 +2,9 @@ version: '3'
 
 services:
   synapse:
-    image: docker.io/matrixdotorg/synapse:latest
+    image: matrixdotorg/synapse
     restart: unless-stopped
-    environment:
-      - SYNAPSE_CONFIG_PATH=/etc/homeserver.yaml
     volumes:
-      # You may either store all the files in a local folder
-      - {{ services_dir }}/synapse:/etc
       - {{ services_dir }}/synapse:/data
     depends_on:
       - db
@@ -16,11 +12,11 @@ services:
       - {{ synapse_internal_ip }}:8008:8008/tcp
 
   db:
-    image: docker.io/postgres:alpine
+    image: postgres:alpine
     restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD={{psql_pass}}
     volumes:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
     ports:
-      - 5432
+      - 5432:5432/tcp

@@ -3,7 +3,7 @@
 
 ###Install options
 services_dir: /opt/matrix
-start_services_after_install: false
+start_services_after_install: true
 
 ###Postgres
 psql_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
@@ -15,15 +15,17 @@ synapse_registration_enabled: false #Allow users to register by them-self
 synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.local
 ###Set to coturn server address. Get synapse public ip if blank.
 synapse_coturn_address: ''
+coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 
-#Enable messanges cleanup script
-synapse_cleanup_enabled: true
+
 synapse_create_admin_user: true
-
 synapse_admin_user: synapse_admin
 synapse_admin_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 
-coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
+#Enable messanges cleanup script
+synapse_cleanup_enabled: true
+synapse_clear_history_oncalendar: hourly
+
 synapse_registration_shared_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_macaroon_secret_key: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_form_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
