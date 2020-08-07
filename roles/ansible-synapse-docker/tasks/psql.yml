@@ -25,7 +25,7 @@
         source: "{{ services_dir }}/schemas"
         type: bind
     ports:
-      - "5432:5432"
+      - 5432:5432/tcp
 
 - name: Wait for psql starts
   wait_for:

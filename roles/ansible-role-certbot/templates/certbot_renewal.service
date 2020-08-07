@@ -1,9 +1,0 @@
-[Unit]
-Description=Clear synapse messages
-
-[Service]
-Type=simple
-ExecStart=/bin/certbot-auto renew --quiet --no-self-upgrade
-
-[Install]
-WantedBy=multi-user.target

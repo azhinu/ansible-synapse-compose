@@ -1,13 +1,14 @@
 ---
 - name: Setup firewalld
   firewalld:
+    zone: trusted
     service: ldaps
     permanent: yes
     state: enabled
 
 - name: setup firewalld
   firewalld:
-    zone: public
+    zone: trusted
     service: ldap
     permanent: yes
     state: enabled
@@ -16,8 +17,8 @@
   service:
     name: firewalld
     state: restarted
+
 - name: Create LDAP directory
-  become: true
   file:
     path: "{{ services_dir }}/ldap"
     state: directory
@@ -27,7 +28,6 @@
     recurse: yes
 
 - name: Copy docker-compose file
-  become: true
   template:
     src: docker-compose.yaml
     dest: "{{ services_dir }}/ldap/docker-compose.yaml"

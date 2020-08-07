@@ -10,8 +10,7 @@ services:
       - LDAP_ADMIN_PASSWORD={{LDAP_ADMIN_PASSWORD}}
     restart: unless-stopped
     ports:
-      - 636:636/tcp
-      - 389:389/tcp
+      - {{ ldap_internal_ip }}:389:389/tcp
 
 {% if LDAP_PHP_ADMIN %}
   openldap-admin:
@@ -19,8 +18,7 @@ services:
     container_name: openldap-php-admin
     environment:
       - PHPLDAPADMIN_HTTPS=false
-      - PHPLDAPADMIN_LDAP_HOSTS=openldap
     restart: unless-stopped
     ports:
-      - 8180:80/tcp
+      - {{ ldap_internal_ip }}:8180:80/tcp
 {% endif %}

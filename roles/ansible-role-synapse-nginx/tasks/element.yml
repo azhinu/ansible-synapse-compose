@@ -1,0 +1,26 @@
+---
+- name: Create Element directory
+  file:
+    path: "{{ element_install_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+
+- name: Geting selected Element release
+  get_url:
+    url: "https://github.com/vector-im/element-web/releases/download/{{element_version}}/element-{{element_version}}.tar.gz"
+    dest: "/tmp/element-web-{{element_version}}.tar.gz"
+
+- name: "Extract element-web to {{ element_install_path }}"
+  unarchive:
+    remote_src: true
+    src: "/tmp/element-web-{{element_version}}.tar.gz"
+    dest: "{{ element_install_path }}"
+    extra_opts: [--strip-components=1]
+
+- name: Copy element config
+  template:
+    src: element.json.j2
+    dest: "{{ element_install_path }}/config.json"

@@ -1,15 +1,9 @@
 ---
 #Default variables
 
-
 ###Install options
 services_dir: /opt/matrix
-ma1sd_enabled: false
-coturn_enabled: false
-nginx_enabled: false
-riot_enabled: false
-riot_version: v1.5.5
-start_services_after_install: false
+start_services_after_install: true
 
 ###Postgres
 psql_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
@@ -17,40 +11,28 @@ synapse_db_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters
 #Default synapse user and db: "synapse"
 
 ###Synapse
+synapse_registration_enabled: false #Allow users to register by them-self
 synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.local
-###To use internal coturn server set "synapse_coturn_address: coturn". Another way set to coturn server address.
-synapse_coturn_address: coturn
+###Set to coturn server address. Get synapse public ip if blank.
+synapse_coturn_address: ''
+coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 
-#Create matrix user with admin privs. To use this option set 'start_services_after_install' to true
-synapse_create_admin_user: false
+
+synapse_create_admin_user: true
 synapse_admin_user: synapse_admin
 synapse_admin_pass: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
 
 #Enable messanges cleanup script
-synapse_cleanup_enabled: false
+synapse_cleanup_enabled: true
+synapse_clear_history_oncalendar: hourly
 
-coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_registration_shared_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_macaroon_secret_key: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 synapse_form_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
 
-
-###ma1sd
-#####https://github.com/ma1uta/ma1sd
-#####Config file locates at /opt/ma1sd
-ma1sd_ldap_enabled: false
-ma1sd_ldap_host: 'ldap-server' #LDAP server address
-ma1sd_ldap_port: '389' #LDAP server port
-ma1sd_ldap_bindDn: 'CN=admin,DC=matrix,DC=local' #Example for user admin at matrix.local LDAP server
-ma1sd_ldap_bindPassword: 'admin'
-ma1sd_ldap_baseDNs:
-  - 'OU=users,DC=matrix,DC=local'
-ma1sd_ldap_ldap_attribute_uid_type: 'uid'
-ma1sd_ldap_ldap_attribute_uid_value: 'sAMAccountName'
-ma1sd_ldap_ldap_attribute_name: 'cn'
-
-
-###Nginx
-nginx_synapse_domain: matrix.local
-nginx_riot_domain: riot.matrix.local
-nginx_tls_disabled: false
+#LDAP
+synapse_ldap_enabled: true
+synapse_ldap_server: matrix.local:389
+synapse_ldap_base: dc=matirx
+synapse_ldap_bind_dn: cn=admin,dc=matirx
+synapse_ldap_bind_pass: "{{LDAP_ADMIN_PASSWORD}}"

@@ -1,65 +1,22 @@
 version: '3'
 
 services:
-
   synapse:
-    image: docker.io/matrixdotorg/synapse:latest
+    image: matrixdotorg/synapse
     restart: unless-stopped
-    environment:
-      - SYNAPSE_CONFIG_PATH=/etc/homeserver.yaml
     volumes:
-      # You may either store all the files in a local folder
-      - {{ services_dir }}/synapse:/etc
       - {{ services_dir }}/synapse:/data
-{% if ma1sd_enabled == true %}
-      - {{ services_dir }}/synapse/rest_auth_provider.py:/usr/local/lib/python3.7/site-packages/rest_auth_provider.py
-{% endif %}
     depends_on:
       - db
     ports:
-      - 8008:8008/tcp
+      - {{ synapse_internal_ip }}:8008:8008/tcp
 
   db:
-    image: docker.io/postgres:alpine
+    image: postgres:alpine
     restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD={{psql_pass}}
     volumes:
       - {{ services_dir }}/schemas:/var/lib/postgresql/data
-    expose:
-      - 5432
-{% if ma1sd_enabled == true %}
-  ma1sd:
-    image: ma1uta/ma1sd:latest
-    restart: unless-stopped
-    environment:
-      - MATRIX_DOMAIN={{synapse_server_name}}
-    volumes:
-      - {{ services_dir }}/ma1sd:/etc/ma1sd
-      - {{ services_dir }}/ma1sd:/var/ma1sd
-    depends_on:
-      - synapse
     ports:
-      - 8090:8090/tcp
-{% endif %}
-
-{% if coturn_enabled == true %}
-  coturn:
-    image: monogramm/docker-coturn:latest
-    restart: unless-stopped
-    volumes:
-      - {{ services_dir }}/coturn:/srv
-    network_mode: host
-{% endif %}
-
-{% if nginx_enabled == true %}
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - {{ services_dir }}/nginx/html:/usr/share/nginx/html:ro
-      - {{ services_dir }}/nginx/conf.d:/etc/nginx/conf.d:ro
-{% endif %}
+      - 5432:5432/tcp

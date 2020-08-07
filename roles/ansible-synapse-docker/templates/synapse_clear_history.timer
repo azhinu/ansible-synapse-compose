@@ -2,7 +2,7 @@
 Description=Clear synapse messages every hour
 
 [Timer]
-OnCalendar=hourly
+OnCalendar={{ synapse_clear_history_oncalendar}}
 
 [Install]
 WantedBy=multi-user.target
