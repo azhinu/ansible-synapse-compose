@@ -2,14 +2,14 @@
 - name: Pre tasks
   hosts: all
   become: true
-  pre_tasks:
-    - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
-      command: authconfig --disablefingerprint --update
-
-- name: Updating Matrix-Synapse
-  hosts: matrix_servers
-  become: true
   tasks:
+  - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
+    command: authconfig --disablefingerprint --update
+
+  - name: Updating Matrix-Synapse
+    hosts: matrix_servers
+    become: true
+    tasks:
     - name: Update all packages
       package: name=* state=latest
 
@@ -19,21 +19,21 @@
         state: present
         build: yes
 
-- name: Updating LDAP
-  hosts: ldap_server
-  tasks:
+  - name: Updating LDAP
+    hosts: ldap_server
+    tasks:
     - name: Update all packages
       package: name=* state=latest
-      
+
     - name: Updating LDAP
       docker_compose:
         project_src: "{{service_dir}}/coturn"
         state: present
         build: yes
 
-- name: Updating Proxy
-  hosts: nginx_servers
-  become: true
-  tasks:
+  - name: Updating Proxy
+    hosts: nginx_servers
+    become: true
+    tasks:
     - name: Update all packages
       package: name=* state=latest

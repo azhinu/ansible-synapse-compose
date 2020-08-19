@@ -2,9 +2,6 @@
 all:
   hosts:
   vars: #Global vars
-    ansible_ssh_user: user
-    become: true
-    certbot_enabled: true
     coturn_enabled: true
     ldap_enabled: true
 
@@ -31,6 +28,7 @@ all:
 
     #Enable messanges cleanup script
     synapse_cleanup_enabled: true
+    synapse_clear_history_oncalendar: hourly
     synapse_create_admin_user: true
 
     synapse_admin_user: synapse_admin
