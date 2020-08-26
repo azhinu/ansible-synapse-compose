@@ -963,6 +963,7 @@ url_preview_accept_language:
 
 # The public URIs of the TURN server to give to clients
 #
+{% if synapse_coturn_address != '' or coturn_enabled %}
 turn_uris: [ "turn:{{synapse_coturn_address}}:3478?transport=udp", "turn:{{synapse_coturn_address}}:3478?transport=tcp" ]
 
 # The shared secret used to compute passwords for the TURN server
@@ -987,7 +988,7 @@ turn_user_lifetime: 86400000
 #
 turn_allow_guests: true
 
-
+{% endif %}
 ## Registration ##
 #
 # Registration can be rate-limited using the parameters in the "Ratelimiting"
@@ -1663,26 +1664,6 @@ oidc_config:
     # changed if using a custom provider.
     #
     config:
-      # name of the claim containing a unique identifier for the user.
-      # Defaults to `sub`, which OpenID Connect compliant providers should provide.
-      #
-      #subject_claim: "sub"
-
-      # Jinja2 template for the localpart of the MXID.
-      #
-      # When rendering, this template is given the following variables:
-      #   * user: The claims returned by the UserInfo Endpoint and/or in the ID
-      #     Token
-      #
-      # This must be configured if using the default mapping provider.
-      #
-      # localpart_template: "{{ user.preferred_username }}"
-
-      # Jinja2 template for the display name to set on first login.
-      #
-      # If unset, no displayname will be set.
-      #
-      #display_name_template: "{{ user.given_name }} {{ user.last_name }}"
 
 
 
@@ -2092,21 +2073,21 @@ password_providers:
 #        #bind_password:
 #        #filter: "(objectClass=posixAccount)"
 
-{% if synapse_ldap_enabled == True %}
+{% if synapse_ldap_enabled %}
     - module: "ldap_auth_provider.LdapAuthProvider"
       config:
         enabled: true
         mode: "search"
-        uri: "ldap://{{synapse_ldap_server}}"
+        uri: "ldap://{{ synapse_ldap_server }}"
         start_tls: false
-        base: "{{synapse_ldap_base}}"
+        base: "{{ synapse_ldap_base }}"
         attributes:
            uid: "uid"
            mail: "email"
            name: "givenName"
          # Search auth if anonymous search not enabled
-        bind_dn: "{{synapse_ldap_bind_dn}}"
-        bind_password: "{{synapse_ldap_bind_pass}}"
+        bind_dn: "{{ synapse_ldap_bind_dn }}"
+        bind_password: "{{ synapse_ldap_bind_pass }}"
         # filter: "(objectClass=posixAccount)"
 {% endif %}
 

@@ -26,7 +26,7 @@
 - name: Get public IP
   ipify_facts:
   register: synapse_coturn_address
-  when: synapse_coturn_address == ''
+  when: synapse_coturn_address == '' and coturn_enabled
 
 - name: Copy Synapse config
   template:
