@@ -5,6 +5,7 @@
   tasks:
   - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
     command: authconfig --disablefingerprint --update
+    ignore_errors: true
 
 - name: "Set up a Matrix server"
   hosts: matrix_servers
