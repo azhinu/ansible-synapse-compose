@@ -6,24 +6,24 @@
   - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
     command: authconfig --disablefingerprint --update
 
-  - name: "Set up a Matrix server"
-    hosts: matrix_servers
-    become: true
-    roles:
-      - ansible-role-docker-ce
-      - ansible-synapse-docker
-    when: ldap_enabled | bool
+- name: "Set up a Matrix server"
+  hosts: matrix_servers
+  become: true
+  roles:
+    - ansible-role-docker-ce
+    - ansible-synapse-docker
+  when: ldap_enabled | bool
 
-  - name: "Set up a OpenLDAP server"
-    hosts: ldap_servers
-    become: true
-    roles:
-      - ansible-role-docker-ce
-      - ansible-role-ldap
+- name: "Set up a OpenLDAP server"
+  hosts: ldap_servers
+  become: true
+  roles:
+    - ansible-role-docker-ce
+    - ansible-role-ldap
 
-  - name: "Set up a Proxy server"
-    hosts: nginx_servers
-    become: true
-    roles:
-      - ansible-role-synapse-nginx
-      - { role: ansible-role-coturn, when: coturn_enabled}
+- name: "Set up a Proxy server"
+  hosts: nginx_servers
+  become: true
+  roles:
+    - ansible-role-synapse-nginx
+    - { role: ansible-role-coturn, when: coturn_enabled}
