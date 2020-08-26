@@ -12,14 +12,13 @@
   roles:
     - ansible-role-docker-ce
     - ansible-synapse-docker
-  when: ldap_enabled | bool
 
 - name: "Set up a OpenLDAP server"
   hosts: ldap_servers
   become: true
   roles:
-    - ansible-role-docker-ce
-    - ansible-role-ldap
+    - { role: ansible-role-docker-ce, when: ldap_enabled | bool}
+    - { role: ansible-role-ldap, when: ldap_enabled | bool}
 
 - name: "Set up a Proxy server"
   hosts: nginx_servers
