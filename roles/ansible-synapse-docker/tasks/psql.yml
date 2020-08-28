@@ -16,7 +16,6 @@
   docker_container:
     name: psql-init
     image: docker.io/postgres:alpine
-    cleanup: true
     auto_remove: true
     env:
       POSTGRES_PASSWORD="{{ psql_pass }}"
