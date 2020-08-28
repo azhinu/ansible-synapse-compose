@@ -6,7 +6,7 @@
   when: item != ''
   loop:
     - "{{ services_dir }}"
-    - "{{ '/opt/matrix' if services_dir != '/opt/matrix' }}"
+    - "{{ '/opt/matrix' if services_dir != '/opt/matrix' else '' }}"
 
 - name: Create Synapse directory
   file:
@@ -74,8 +74,8 @@
 
 - debug:
     msg:
-    - "{{ 'Cant create Admin user without services starting' if not start_services_after_install|bool and synapse_create_admin_user|bool }}"
-    - "{{ 'User already exist' if 'User ID already taken' in command_result.stdout }}"
+    - "{{ 'Cant create Admin user without services starting' if not start_services_after_install|bool and synapse_create_admin_user|bool else '' }}"
+    - "{{ 'User already exist' if 'User ID already taken' in command_result.stdout else '' }}"
 
 - name: Enable Synapse messanges cleanup
   include_tasks: synapse_cleanup.yml

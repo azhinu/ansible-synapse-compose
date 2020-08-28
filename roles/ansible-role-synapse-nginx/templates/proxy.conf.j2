@@ -17,10 +17,11 @@ server {
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
 {% if element_enabled %}
+  index index.html;
   root {{ element_install_path }};
 {% else %}
   location / {
-    return 502;
+    return 500;
   }
 {% endif %}
 
@@ -32,9 +33,9 @@ server {
     proxy_set_header Host $http_host;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
-    access_log       /var/log/nginx/{{ nginx_proxy_server_name }}-synapse-access.log;
-    error_log        /var/log/nginx/{{ nginx_proxy_server_name }}-synapse-error.log;
   }
+  access_log       /var/log/nginx/{{ nginx_proxy_server_name }}-synapse-access.log;
+  error_log        /var/log/nginx/{{ nginx_proxy_server_name }}-synapse-error.log;
 
 {% if LDAP_PHP_ADMIN %}
   location /ldap-admin/ {
