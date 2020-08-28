@@ -3,6 +3,27 @@
   template:
     src: nginx.repo
     dest: /etc/yum.repos.d/nginx.repo
+  when: ansible_os_family == 'RedHat'
+
+- name: "Add NGINX repo (Debian)"
+  block:
+    - name: "ADD REPO: Add required packages"
+      package:
+        name:
+          - gnupg2
+          - ca-certificates
+        state: latest
+    - name: "ADD REPO: Add repo key"
+      apt_key:
+        url: https://nginx.org/keys/nginx_signing.key
+        state: present
+    - name: "Add NGINX repo (Debian)"
+      apt_repository:
+        repo: deb http://nginx.org/packages/mainline/"{{ ansible_distribution }}" "{{ ansible_distribution_release }}" nginx
+        state: present
+        filename: nginx
+        update_cache: true
+  when: ansible_os_family == 'Debian'
 
 - name: Install Nginx
   package:
