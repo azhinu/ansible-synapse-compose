@@ -11,7 +11,7 @@
   hosts: matrix_servers
   become: true
   roles:
-    - ansible-synapse
+    - ansible-role-synapse
 
 - name: "Set up a OpenLDAP server"
   hosts: ldap_servers
