@@ -1,0 +1,99 @@
+---
+- name: Stop services
+  docker_compose:
+    project_src: "{{ item }}"
+    state: absent
+  when: item != ''
+  loop:
+    - "{{ services_dir }}"
+    - "{{ '/opt/matrix' if services_dir != '/opt/matrix' }}"
+
+- name: Create Synapse directory
+  file:
+    path: "{{ services_dir }}/synapse"
+    state: directory
+    owner: "991"
+    group: "991"
+    mode: 0775
+
+- name: Generate Synapse env
+  docker_container:
+    name: synapse-cfg-gen
+    image: matrixdotorg/synapse:latest
+    interactive: true
+    cleanup: true
+    auto_remove: true
+    command: generate
+    env:
+      SYNAPSE_REPORT_STATS=no
+      SYNAPSE_SERVER_NAME="{{ synapse_server_name }}"
+    mounts:
+      - target: /data
+        source: "{{ services_dir }}/synapse"
+        type: bind
+
+- name: Get public IP
+  ipify_facts:
+  register: synapse_coturn_address
+  when: synapse_coturn_address == '' and coturn_enabled|bool
+
+- name: Copy Synapse config
+  template:
+    src: homeserver.yaml.j2
+    dest: "{{ services_dir }}/synapse/homeserver.yaml"
+    mode: 0666
+    owner: "991"
+    group: "991"
+
+- name: Configurate Postgre
+  include_tasks: psql.yml
+
+- name: Copy docker-compose file
+  template:
+    src: docker-compose.yaml.j2
+    dest: "{{ services_dir }}/docker-compose.yaml"
+    mode: 0666
+
+
+- name: Start services
+  docker_compose:
+    project_src: "{{ services_dir }}"
+  when: start_services_after_install|bool
+
+- name: Wait for synapse starts
+  wait_for:
+    host: "{{ synapse_internal_ip }}"
+    port: 8008
+    delay: 10
+
+- name: Create Synapse admin user
+  command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{ synapse_admin_user }} -p {{ synapse_admin_pass }} -a -c /data/homeserver.yaml http://localhost:8008'
+  register: command_result
+  failed_when: "not 'User ID already taken' in command_result.stdout"
+  when: start_services_after_install|bool and synapse_create_admin_user|bool
+
+- debug:
+    msg:
+    - "{{ 'Cant create Admin user without services starting' if not start_services_after_install|bool and synapse_create_admin_user|bool }}"
+    - "{{ 'User already exist' if 'User ID already taken' in command_result.stdout }}"
+
+- name: Enable Synapse messanges cleanup
+  include_tasks: synapse_cleanup.yml
+  when: synapse_cleanup_enabled|bool and synapse_create_admin_user|bool and start_services_after_install|bool
+
+###END
+- debug:
+    msg:
+    - "Generated credentials:"
+    - "Postgre:"
+    - "  User: postgre"
+    - "  Pass: {{ psql_pass }}"
+    - "  User: synapse"
+    - "  Pass: {{ synapse_db_pass }}"
+    - "Synapse:"
+    - "  Turn secret: {{ coturn_secret }}"
+    - "  Registration_secret: {{ synapse_registration_shared_secret }}"
+    - "  Macaroon secret: {{ synapse_macaroon_secret_key }}"
+    - "  Form secret: {{ synapse_form_secret }}"
+    - "  Synapse admin user: {{ synapse_admin_user }}"
+    - "  Synapse admin pass: {{ synapse_admin_pass }}"

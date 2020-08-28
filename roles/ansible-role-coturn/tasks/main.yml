@@ -39,7 +39,7 @@
 - name: Configure coturn server
   template:
     src: turnserver.conf
-    dest: /etc/coturn/turnserver.conf
+    dest: /etc/coturn/turnserver.conf.j2
 
 - name: Start and enable Coturn
   service:

@@ -1,0 +1,50 @@
+---
+- name: Pre tasks
+  hosts: all
+  become: true
+  tasks:
+  - name: Disable Fingerprint checking that may be enabled.  When enabled, causes SSH issues.
+    command: authconfig --disablefingerprint --update
+    ignore_errors: true
+
+- name: "Set up a Matrix server"
+  hosts: matrix_servers
+  become: true
+  roles:
+    - ansible-synapse-docker
+
+- name: "Set up a OpenLDAP server"
+  hosts: ldap_servers
+  become: true
+  roles:
+    - { role: ansible-role-ldap, when: ldap_enabled|bool}
+
+- name: "Set up a Proxy server"
+  hosts: nginx_servers
+  become: true
+  roles:
+    - ansible-role-synapse-nginx
+    - { role: ansible-role-coturn, when: coturn_enabled|bool}
+
+- hosts: localhost
+  connection: local
+  tasks:
+  - debug:
+      msg:
+      - "Generated credentials:"
+      - "Postgre:"
+      - "  User: postgre"
+      - "  Pass: {{ psql_pass }}"
+      - "  User: synapse"
+      - "  Pass: {{ synapse_db_pass }}"
+      - "Synapse:"
+      - "  Turn secret: {{ coturn_secret }}"
+      - "  Registration_secret: {{ synapse_registration_shared_secret }}"
+      - "  Macaroon secret: {{ synapse_macaroon_secret_key }}"
+      - "  Form secret: {{ synapse_form_secret }}"
+      - "  Synapse admin user: {{ synapse_admin_user }}"
+      - "  Synapse admin pass: {{ synapse_admin_pass }}"
+      - "LDAP:"
+      - "  Domain: {{ LDAP_DOMAIN }}"
+      - "  LDAP user: admin"
+      - "  LDAP password: {{ LDAP_ADMIN_PASSWORD }}"

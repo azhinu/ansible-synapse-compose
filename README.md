@@ -31,7 +31,7 @@ Nginx role can automatically obtain TLS certs with Certbot or use existing certs
 
 ### Installation
 
-1. Prepair your servers. Synapse, OpenLDAP and Nginx should be in a same secure network (e.g VPN).
+1. Prepair your servers. Synapse, OpenLDAP and Nginx should be in a same secure network (e.g VPN). Synapse required 5432 (psql) and 8008 port available. LDAP required 381 and 8110 ports available. Nginx required 80 and 443 ports available.
 2. Fill inventory, using `inventory/hosts_sample.yaml` as example. (Example inventory contains default variables.)
 3. Run Ansible-Playbook with setup.yaml
 

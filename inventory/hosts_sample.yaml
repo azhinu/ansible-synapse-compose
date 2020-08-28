@@ -62,7 +62,7 @@ all:
     nginx_tls_key_path: /etc/letsencrypt/live/{{ nginx_proxy_server_name }}/privkey.pem
 
     element_enabled: false
-    element_version: v1.7.3
+    element_version: v1.7.4
 
   children:
     matrix_servers:

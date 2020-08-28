@@ -5,12 +5,12 @@
     state: directory
     owner: root
     group: root
-    mode: 0775
+    mode: 0774
     recurse: yes
 
 - name: Geting selected Element release
   get_url:
-    url: "https://github.com/vector-im/element-web/releases/download/{{element_version}}/element-{{element_version}}.tar.gz"
+    url: "https://github.com/vector-im/element-web/releases/download/{{element_version}}/riot-{{element_version}}.tar.gz"
     dest: "/tmp/element-web-{{element_version}}.tar.gz"
 
 - name: "Extract element-web to {{ element_install_path }}"
@@ -24,3 +24,4 @@
   template:
     src: element.json.j2
     dest: "{{ element_install_path }}/config.json"
+    mode: 0644

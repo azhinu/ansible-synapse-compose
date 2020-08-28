@@ -16,7 +16,7 @@ synapse_server_name: matrix.local #Used in matrix users name, e.g @user:matrix.l
 ###Set to coturn server address. Get synapse public ip if blank.
 synapse_coturn_address: ''
 coturn_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits') }}"
-
+coturn_enabled: true
 
 synapse_create_admin_user: true
 synapse_admin_user: synapse_admin

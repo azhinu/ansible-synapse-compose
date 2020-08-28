@@ -1,18 +1,21 @@
 ---
 - name: Copy history cleanup script
   template:
-    src: synapse_clear_history.py
+    src: synapse_clear_history.py.j2
     dest: "{{ services_dir }}/synapse/synapse_clear_history.py"
+    mode: 0700
 
 - name: Copy history cleanup service
   template:
-    src: synapse_clear_history.service
+    src: synapse_clear_history.service.j2
     dest: /usr/lib/systemd/system/synapse_clear_history.service
+    mode: 0644
 
 - name: Copy history cleanup timer
   template:
-    src: synapse_clear_history.timer
+    src: synapse_clear_history.timer.j2
     dest: /usr/lib/systemd/system/synapse_clear_history.timer
+    mode: 0644
 
 - name: Enable history cleanup timer
   systemd:

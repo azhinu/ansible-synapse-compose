@@ -29,7 +29,7 @@
 
 - name: Copy docker-compose file
   template:
-    src: docker-compose.yaml
+    src: docker-compose.yaml.j2
     dest: "{{ services_dir }}/ldap/docker-compose.yaml"
 
 - name: Start services
@@ -38,7 +38,7 @@
 
 - debug:
     msg:
-      - 'LDAP creds:'
-      - 'Domain: {{LDAP_DOMAIN}}'
-      - 'LDAP user: admin'
-      - 'LDAP password: {{LDAP_ADMIN_PASSWORD}}'
+    - "LDAP creds:"
+    - "  Domain: {{ LDAP_DOMAIN }}"
+    - "  LDAP user: admin"
+    - "  LDAP password: {{ LDAP_ADMIN_PASSWORD }}"

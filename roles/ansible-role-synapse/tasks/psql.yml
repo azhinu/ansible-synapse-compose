@@ -5,7 +5,7 @@
     state: directory
     owner: '70'
     group: root
-    mode: 0775
+    mode: 0700
 
 - name: install psycopg2
   pip:
@@ -49,6 +49,7 @@
     name: synapse
     password: "{{ synapse_db_pass }}"
     priv: "ALL"
+    no_password_changes: true
 
 - name: Stop postgres
   docker_container:

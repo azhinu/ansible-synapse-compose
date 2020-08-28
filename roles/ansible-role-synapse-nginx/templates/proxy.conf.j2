@@ -17,7 +17,7 @@ server {
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
 {% if element_enabled %}
-  root {{ element_install_path }}
+  root {{ element_install_path }};
 {% else %}
   location / {
     return 502;
