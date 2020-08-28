@@ -34,7 +34,7 @@
   package:
     name: "{{ item.name }}"
     state: present
-  when: (ansible_os_family == 'RedHat' or ansible_distribution == 'Debian') and nginx_use_certbot|bool and item.when
+  when: nginx_use_certbot|bool and item.when
   loop:
     - { name: python3-certbot-nginx, when: "{{ ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8' }}" }
     - { name: python2-certbot-nginx, when: "{{ ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7' }}" }

@@ -2,19 +2,18 @@
 - name: Setup firewalld
   firewalld:
     service: "{{ item }}"
-    permanent: yes
+    permanent: true
     state: enabled
   loop:
     - 'https'
     - 'http'
-  register: firewall
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Restart firewalld
   service:
     name: firewalld
     state: restarted
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat and firewall.changed'
+  when: ansible_os_family == 'RedHat'
 
 - name: Enable Web services UFW rule
   ufw:
@@ -24,4 +23,4 @@
   loop:
     - 443
     - 80
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
