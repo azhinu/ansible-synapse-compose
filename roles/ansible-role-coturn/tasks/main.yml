@@ -4,28 +4,28 @@
     port: 60535-62535/udp
     permanent: yes
     state: enabled
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Enable coturn firewalld rule
   firewalld:
     port: 3478/tcp
     permanent: yes
     state: enabled
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Enable coturn UFW rule
   ufw:
     rule: allow
     port: 60535:62535
     proto: udp
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 
 - name: Enable coturn UFW rule
   ufw:
     rule: allow
     port: 3478
     proto: tcp
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 
 - name: Get public IP
   ipify_facts:

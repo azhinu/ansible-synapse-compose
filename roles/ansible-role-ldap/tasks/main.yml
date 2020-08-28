@@ -5,6 +5,7 @@
     service: ldaps
     permanent: yes
     state: enabled
+  when: ansible_os_family == 'RedHat'
 
 - name: setup firewalld
   firewalld:
@@ -12,11 +13,13 @@
     service: ldap
     permanent: yes
     state: enabled
+  when: ansible_os_family == 'RedHat'
 
 - name: Bounce firewalld
   service:
     name: firewalld
     state: restarted
+  when: ansible_os_family == 'RedHat'
 
 - name: Create LDAP directory
   file:
