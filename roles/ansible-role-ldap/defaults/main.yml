@@ -3,3 +3,4 @@ LDAP_PHP_ADMIN: True
 LDAP_ORGANISATION: "Matrix-Synapse"
 LDAP_DOMAIN: "matrix"
 LDAP_ADMIN_PASSWORD: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits') }}"
+ldap_internal_ip: 127.0.0.1

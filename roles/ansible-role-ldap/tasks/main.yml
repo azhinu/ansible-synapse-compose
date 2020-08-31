@@ -1,25 +1,46 @@
 ---
-- name: Setup firewalld
-  firewalld:
-    zone: trusted
-    service: ldaps
-    permanent: yes
-    state: enabled
+- name: Getting interface name
+  set_fact:
+    firewall_internal_interface: "{{ item }}"
+  when: hostvars[inventory_hostname]['ansible_{{item}}']['ipv4']['address'] == {{ ldap_internal_ip }}
+  with_items:
+    - "{{ ansible_interfaces }}"
+
+- name: Setup Firewalld
+  block:
+  - name: Set internal interface
+    firewalld:
+      zone: internal
+      interface: "{{ firewall_internal_interface }}"
+      permanent: yes
+      state: enabled
+
+  - name: Allow internal LDAP
+    firewalld:
+      zone: internal
+      service: "{{ item }}"
+      permanent: yes
+      state: enabled
+    loop:
+      - ldap
+      - ldaps
+
+  - name: Bounce firewalld
+    service:
+      name: firewalld
+      state: restarted
   when: ansible_os_family == 'RedHat'
 
-- name: setup firewalld
-  firewalld:
-    zone: trusted
-    service: ldap
-    permanent: yes
-    state: enabled
-  when: ansible_os_family == 'RedHat'
-
-- name: Bounce firewalld
-  service:
-    name: firewalld
-    state: restarted
-  when: ansible_os_family == 'RedHat'
+- name: Setup UFW
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+    interface: "{{ firewall_internal_interface }}"
+  loop:
+    - 389
+    - 636
+  when: ansible_os_family == 'Debian'
 
 - name: Create LDAP directory
   file:
