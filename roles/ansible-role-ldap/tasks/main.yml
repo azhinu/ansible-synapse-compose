@@ -1,29 +1,33 @@
 ---
-- name: Getting interface name
-  set_fact:
-    firewall_internal_interface: "{{ item }}"
-  when: vars['ansible_'~item].ipv4.address|default('0.0.0.0') == ldap_internal_ip
-  with_items:
-    - "{{ ansible_interfaces }}"
-
 - name: Setup Firewalld
   block:
+
+  - name: Getting interface name
+    set_fact:
+      firewall_internal_interface: "{{ item }}"
+    when: vars['ansible_'~item].ipv4.address|default('0.0.0.0') == ldap_internal_ip
+    with_items:
+      - "{{ ansible_interfaces }}"
+
+  - name: Getting docker interface name
+    set_fact:
+      firewall_docker_interface: "{{ item }}"
+    when: ('br-' in item)
+    with_items:
+      - "{{ ansible_interfaces }}"
+
   - name: Set internal interface
-    firewalld:
-      zone: internal
-      interface: "{{ firewall_internal_interface }}"
-      permanent: yes
-      state: enabled
+    command: "firewall-cmd --zone=external --change-interface={{ item }}"
+    loop:
+      - "{{ firewall_internal_interface }}"
+      - "{{ firewall_docker_interface }}"
 
   - name: Allow internal LDAP
     firewalld:
-      zone: internal
-      service: "{{ item }}"
+      zone: external
+      service: ldap
       permanent: yes
       state: enabled
-    loop:
-      - ldap
-      - ldaps
 
   - name: Bounce firewalld
     service:
@@ -34,12 +38,9 @@
 - name: Setup UFW
   ufw:
     rule: allow
-    port: "{{ item }}"
+    port: 389
     proto: tcp
-    interface: "{{ firewall_internal_interface }}"
-  loop:
-    - 389
-    - 636
+    to_ip: "{{ ldap_internal_ip }}"
   when: ansible_os_family == 'Debian'
 
 - name: Create LDAP directory

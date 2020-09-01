@@ -48,8 +48,8 @@ This role install Synapse server with PostgreSQL.
 
 `synapse_ldap_server: matrix.local:389` — LDAP server address and port.
 
-`synapse_ldap_base: dc=matirx` — LDAP domain
+`synapse_ldap_base: dc=matrix` — LDAP domain
 
-`synapse_ldap_bind_dn: cn=admin,dc=matirx` — Bind user
+`synapse_ldap_bind_dn: cn=admin,dc=matrix` — Bind user
 
 `synapse_ldap_bind_pass: "{{LDAP_ADMIN_PASSWORD}}"` — Bind password. By default using admin password from LDAP role.

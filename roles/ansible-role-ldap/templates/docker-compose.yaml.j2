@@ -5,9 +5,9 @@ services:
     image: osixia/openldap:latest
     container_name: openldap-server
     environment:
-      - LDAP_ORGANISATION={{LDAP_ORGANISATION}}
-      - LDAP_DOMAIN={{LDAP_DOMAIN}}
-      - LDAP_ADMIN_PASSWORD={{LDAP_ADMIN_PASSWORD}}
+      LDAP_ORGANISATION: {{LDAP_ORGANISATION}}
+      LDAP_DOMAIN: {{LDAP_DOMAIN}}
+      LDAP_ADMIN_PASSWORD: {{LDAP_ADMIN_PASSWORD}}
     restart: unless-stopped
     ports:
       - {{ ldap_internal_ip }}:389:389/tcp
@@ -17,7 +17,8 @@ services:
     image: osixia/phpldapadmin:latest
     container_name: openldap-php-admin
     environment:
-      - PHPLDAPADMIN_HTTPS=false
+      PHPLDAPADMIN_HTTPS: "false"
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
     restart: unless-stopped
     ports:
       - {{ ldap_internal_ip }}:8180:80/tcp

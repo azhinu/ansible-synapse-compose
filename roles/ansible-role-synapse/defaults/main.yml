@@ -33,6 +33,6 @@ synapse_form_secret: "{{ lookup('password', '/dev/null length=64 chars=hexdigits
 #LDAP
 synapse_ldap_enabled: true
 synapse_ldap_server: matrix.local:389
-synapse_ldap_base: dc=matirx
-synapse_ldap_bind_dn: cn=admin,dc=matirx
+synapse_ldap_base: dc=matrix
+synapse_ldap_bind_dn: cn=admin,dc=matrix
 synapse_ldap_bind_pass: "{{LDAP_ADMIN_PASSWORD}}"
