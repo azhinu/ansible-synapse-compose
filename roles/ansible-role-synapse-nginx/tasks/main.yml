@@ -84,6 +84,10 @@
     dest: /etc/nginx/conf.d/{{ nginx_proxy_server_name }}.conf
     mode: 0644
 
+- name: "Nginx: Kill nginx"
+  command: pkill nginx
+  ignore_errors: true
+
 - name: "Nginx: Start service"
   service:
     name: nginx
