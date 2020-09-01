@@ -70,7 +70,7 @@
 - name: Create Synapse admin user
   command: 'docker exec matrix_synapse_1 register_new_matrix_user -u {{ synapse_admin_user }} -p {{ synapse_admin_pass }} -a -c /data/homeserver.yaml http://localhost:8008'
   register: command_result
-  failed_when: "not 'User ID already taken' in command_result.stdout or not 'Success!' in command_result.stdout"
+  failed_when: not ('User ID already taken' in command_result.stdout or 'Success!' in command_result.stdout)
   when: start_services_after_install|bool and synapse_create_admin_user|bool
 
 - debug:
