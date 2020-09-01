@@ -53,7 +53,7 @@
 - name: "Create certificate"
   command: "certbot certonly --nginx --register-unsafely-without-email --agree-tos -d {{ nginx_proxy_server_name }}"
   args:
-    creates: /etc/letsencrypt/live/{{ fqdn }}
+    creates: /etc/letsencrypt/live/{{ nginx_proxy_server_name }}
   when: nginx_use_certbot|bool
 
 - name: "Enable systemd timer for certbot"
