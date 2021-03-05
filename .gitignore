@@ -1,3 +1,5 @@
 inventory/*
 !/inventory/hosts_sample.yaml
 !/inventory/hosts_min_sample.yaml
+**/.DS_Store
+.DS_Store
